@@ -1,0 +1,36 @@
+{
+  "name": "hni-diploma",
+  "version": "0.0.1",
+  "description": "Umsýsla stiga fyrir diploma keppendur.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-watch src/app.js",
+    "build": "babel src/app.js -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.mikligardur.com:HNI/diploma-umsysla.git"
+  },
+  "author": "GDGunnars",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-watch": "^2.0.7",
+    "jslint": "^0.12.0"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.2.0",
+    "mongoose": "^5.0.11",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "winston": "^2.4.1"
+  }
+}
