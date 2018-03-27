@@ -21,6 +21,10 @@ const UserSchema = new Schema({
         type: String,
         enum: ["read", "write", "admin", "superadmin"],
         default: "read"
+    },
+    disabled: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
