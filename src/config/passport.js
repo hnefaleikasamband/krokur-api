@@ -9,16 +9,8 @@
  import {ExtractJwt} from 'passport-jwt';
  import LocalStrategy from "passport-local";
 
- const localOptions = {
-     usernameField: "email"
- }
- const jwtOptions = {
-     jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
-     secretOrKey: config.secret
- };
-
  // Login strategy
- const localLogin = new LocalStrategy(localOptions, (email, password, done) => {
+ const localLogin = new LocalStrategy({usernameField: "email"}, (email, password, done) => {
     User.findOne({ email: email }, (err, user) => {
         if(err) { return done(err); }
         if(!user) { return done(null, false, { error: "Your login details could not be verified"}); }
@@ -27,14 +19,15 @@
             if(err) { return done(err); }
             if(!isMatch) { return done(null, false, { error: "Your login details could not be verified"}); }
 
-            user.DTO(userDTO => {
-                return done(null, userDTO);
-            })
-            
+            return done(null, user);
         });
     });
  });
 
+ const jwtOptions = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("jwt"),
+    secretOrKey: config.secret
+};
  // JWT authentication
  const jwtLogin = new JwtStrategy(jwtOptions, (payload, done) => {
     console.log("Payload in JWT strategy: ", payload);
