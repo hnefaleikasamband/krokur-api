@@ -6,11 +6,13 @@ const Schema = mongoose.Schema;
 
 const BoutSchema = new Schema({
     athlete: {
-        type: Schema.Types.ObjectId, ref: 'Athlete',
+        type: Schema.Types.ObjectId,
+        ref: 'Athlete',
         required: true
     },
     opponent: {
-        type: Schema.Types.ObjectId, ref: 'Athlete',
+        type: Schema.Types.ObjectId,
+        ref: 'Athlete'
     },
     type: {
         type: String,
@@ -23,6 +25,9 @@ const BoutSchema = new Schema({
         min: 9,
         max: 45,
         required: true
+    },
+    eventOrganizer: {
+        type: String
     }
 
 }, {
