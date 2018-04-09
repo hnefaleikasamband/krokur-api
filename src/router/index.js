@@ -7,6 +7,7 @@ import Router from "express";
 import passportService from "../config/passport";
 import passport from "passport";
 import AuthAccess from "./authentication";
+import athletes from "./athletes";
 
 
 // Middleware for login and auth
@@ -26,6 +27,7 @@ export default function (app) {
     const apiRoutes = new Router();
     const authRoutes = new Router();
 
+    apiRoutes.use('/athletes', athletes);
     apiRoutes.use("/auth", authRoutes);
 
     authRoutes.post("/register", AuthAccess.register);
