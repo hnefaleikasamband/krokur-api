@@ -9,7 +9,7 @@ const AthleteSchema = new Schema({
         type: String,
         require: true
     },
-    kt: {
+    ssn: {
         type: String,
         require: true,
         unique: true

@@ -30,7 +30,7 @@ athleteRouter.get('/', (req, res, next) => {
 athleteRouter.post('/', (req, res, next) => {
     // TODO: Validate input
     const name = req.body.name;
-    const kt = req.body.kt
+    const ssn = req.body.ssn
     const club = req.body.club;
     const tmpAchievements = req.body.achievements;
 
@@ -39,10 +39,10 @@ athleteRouter.post('/', (req, res, next) => {
         return res.status(422).json({ error: "Missing name."});
     }
 
-    // Return error KT not present and not equal to 10
-    // TODO: Must add check if kt is  correct.
-    if (!kt || !kt.length || kt.length != 10) {
-        return res.status(422).json({ error: "KT missing or incorrect"});
+    // Return error if SSN/KT not present and not equal to 10
+    // TODO: Must add check if valid icelandic ssn/kt.
+    if (!ssn || !ssn.length || ssn.length != 10) {
+        return res.status(422).json({ error: "SSN/KT missing or incorrect"});
     }
 
     const achievements = {};
@@ -60,16 +60,16 @@ athleteRouter.post('/', (req, res, next) => {
     }
     console.log("achievements: ", achievements);
     // TODO: Check if unique keys already exist
-    Athlete.findOne({kt: kt}, (err, existingUser) => {
+    Athlete.findOne({ssn: ssn}, (err, existingUser) => {
         if (err) {return next(err);}
-        // If Athletes kt is not unique, return error
+        // If Athletes ssn/kt is not unique, return error
         if (existingUser) {
             return res.status(422).send({error: "That kennitala is already in use."});
         }
 
         let athlete = new Athlete({
             name: name,
-            kt: kt,
+            ssn: ssn,
             achievements: achievements
         });
         console.log('athlete', athlete)
