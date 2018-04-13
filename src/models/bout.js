@@ -27,7 +27,8 @@ const BoutSchema = new Schema({
         required: true
     },
     eventOrganizer: {
-        type: String
+        type: String,
+        required: true
     }
 
 }, {

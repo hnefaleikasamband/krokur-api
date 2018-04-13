@@ -9,6 +9,7 @@
 
 import Router from "express";
 import Athlete from "../models/athlete";
+import Bout from "../models/bout";
 
 const athleteRouter = new Router();
 
@@ -36,13 +37,13 @@ athleteRouter.post('/', (req, res, next) => {
 
     // Return error if full name not provided
     if (!name || !name.length) {
-        return res.status(422).json({ error: "Missing name."});
+        return res.status(400).json({ error: "Missing name."});
     }
 
     // Return error if SSN/KT not present and not equal to 10
     // TODO: Must add check if valid icelandic ssn/kt.
     if (!ssn || !ssn.length || ssn.length != 10) {
-        return res.status(422).json({ error: "SSN/KT missing or incorrect"});
+        return res.status(400).json({ error: "SSN/KT missing or incorrect"});
     }
 
     const achievements = {};
@@ -54,7 +55,7 @@ athleteRouter.post('/', (req, res, next) => {
             console.log('achievement: ', a, " , value: ", tmpAchievements[a]);
             const newDate = Date.parse(tmpAchievements[a]);
             console.log(newDate);
-            if(!newDate) return res.status(422).json({ error: `Date format not correct for: ${a}`});
+            if(!newDate) return res.status(400).json({ error: `Date format not correct for: ${a}`});
             achievements[a] = newDate
         }
     }
@@ -64,7 +65,7 @@ athleteRouter.post('/', (req, res, next) => {
         if (err) {return next(err);}
         // If Athletes ssn/kt is not unique, return error
         if (existingUser) {
-            return res.status(422).send({error: "That kennitala is already in use."});
+            return res.status(400).send({error: "That kennitala is already in use."});
         }
 
         let athlete = new Athlete({
@@ -86,4 +87,49 @@ athleteRouter.post('/', (req, res, next) => {
         })
     });
 });
+
+
+/**
+ * Fetches all bouts for athlete with _id
+ * GET /api/v1/athlete/_id/bouts
+ */
+athleteRouter.get("/:_id/bouts", (req, res, next) => {
+    Bout.find({athlete: req.params._id}, (err, bouts) => {
+        if (err) { res.status(500).json({"error": "Database Error"});}
+        res.json({bouts});
+    });
+});
+
+/**
+ * Creates a new bout and saves it in mongo
+ * POST /api/v1/athlete/:_id/bouts
+ */
+athleteRouter.post("/:_id/bouts", (req, res, next) => {
+    let bout = new Bout({
+        athlete: req.params._id,
+        opponent: req.body.opponent,
+        type: typeof req.body.type === "string" ? req.body.type.toUpperCase() : "",
+        date: req.body.date,
+        points: req.body.points,
+        eventOrganizer: req.body.eventOrganizer
+    });
+
+    bout.validate()
+        .then(valid => {
+            return bout.save();
+        }, notValid => {
+            res.status(400).send({error: notValid.message});
+        })
+        .then( success => {
+            return res.status(201).json({bout});
+        }, fail => {
+            console.log("could not save: ", fail);
+            res.status(400).send({error: fail});
+        })
+        .catch( (error) => {
+            return next(error);
+        });
+
+});
+
 export default athleteRouter;
