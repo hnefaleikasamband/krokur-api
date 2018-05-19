@@ -10,20 +10,29 @@ const boutRouter = new Router();
 
 /**
  * Get's all bouts and sends them back as a JSON array.
- * if id is given, we get all bouts for that id.
+ * if id is given, we get only bout with that id.
  * GET  /api/v1/bouts
  */
-boutRouter.get("/:_id?", (req, res, next) => {
-    if( req.params._id) {
-        Bout.find({athlete: req.params._id}, (err, bouts) => {
-            if (err) { res.status(500).json({"error": "Database Error"});}
-            res.json({bouts});
-        });
+boutRouter.get("/:id?", (req, res, next) => {
+    if(req.params.id) {
+        Bout.
+            find({_id: req.params.id}).
+            populate({ path: "opponent", select: 'name club'}).
+            exec( function(err, bout) {
+                if (err) { res.status(500).json({"error": "Database Error"});}
+                console.log(bout.opponent);
+                res.json({bout});
+            });
     } else {
-        Bout.find({}, (err, bouts) => {
-            if (err) { res.status(500).json({"error": "Database Error"});}
-            res.json({bouts});
-        });
+        Bout.
+            find().
+            populate({ path: "athlete", select: "name club"}).
+            populate({ path: "opponent", select: "name club"}).
+            exec( function(err, bout) {
+                if (err) { res.status(500).json({"error": "Database Error"});}
+                console.log(bout.opponent);
+                res.json({bout});
+            });
     }
 });
 
@@ -49,6 +58,8 @@ boutRouter.post("/bouts", (req, res, next) => {
         })
         .then( success => {
             return res.status(201).json({bout});
+            // FIXME: This is a issue, it goes to the next .then() 
+                // and tries to set header after they are set
         }, fail => {
             console.log("could not save: ", fail);
             res.status(400).send({error: fail});

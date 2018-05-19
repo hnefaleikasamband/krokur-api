@@ -35,56 +35,37 @@ athleteRouter.post('/', (req, res, next) => {
     const club = req.body.club;
     const tmpAchievements = req.body.achievements;
 
-    // Return error if full name not provided
-    if (!name || !name.length) {
-        return res.status(400).json({ error: "Missing name."});
-    }
-
-    // Return error if SSN/KT not present and not equal to 10
-    // TODO: Must add check if valid icelandic ssn/kt.
-    if (!ssn || !ssn.length || ssn.length != 10) {
-        return res.status(400).json({ error: "SSN/KT missing or incorrect"});
-    }
-
-    const achievements = {};
-    // Return error if achievements are not a date
-    for(const a in tmpAchievements) {
-        // TODO: Make sure that valid date is being set
-        // Testing
-        if (a) {
-            console.log('achievement: ', a, " , value: ", tmpAchievements[a]);
-            const newDate = Date.parse(tmpAchievements[a]);
-            console.log(newDate);
-            if(!newDate) return res.status(400).json({ error: `Date format not correct for: ${a}`});
-            achievements[a] = newDate
-        }
-    }
-    console.log("achievements: ", achievements);
-    // TODO: Check if unique keys already exist
     Athlete.findOne({ssn: ssn}, (err, existingUser) => {
-        if (err) {return next(err);}
-        // If Athletes ssn/kt is not unique, return error
+        if (err ) { return next(err);}
         if (existingUser) {
-            return res.status(400).send({error: "That kennitala is already in use."});
+            return res.status(400).send({error: "Athlete already exists"});
         }
 
         let athlete = new Athlete({
             name: name,
             ssn: ssn,
-            achievements: achievements
+            club: club,
+            achievements: tmpAchievements
         });
-        console.log('athlete', athlete)
-
-        if(club) athlete.club = club;
-        athlete.validate().then( done => { console.log('validated: ', done)}, err => { console.log('error', err)})
-        // TODO: Create new athlete and save him.
-        athlete.save()
-        .then( success => {
-            console.log(success);
-            res.status(201).json({athlete});
-        }, reason => {
-            return next(reason);
-        })
+        athlete.validate()
+            .then( valid => {
+                return athlete.save();
+            }, notValid => {
+                res.status(400).send({error: notValid.message});
+                // FIXME: This is a issue, it goes to the next .then() 
+                // and tries to set header after they are set
+            })
+            .then( success => {
+                console.log("trying to set header after validation had failed");
+                return res.status(201).json({athlete});
+            }, fail => {
+                console.log("Could not save athlete: ", fail);
+                res.status(400).send({error: fail});
+            })
+            .catch( error => {
+                console.log("caught some error:", error);
+                return next(error);
+            })
     });
 });
 
@@ -94,10 +75,13 @@ athleteRouter.post('/', (req, res, next) => {
  * GET /api/v1/athlete/_id/bouts
  */
 athleteRouter.get("/:_id/bouts", (req, res, next) => {
-    Bout.find({athlete: req.params._id}, (err, bouts) => {
-        if (err) { res.status(500).json({"error": "Database Error"});}
-        res.json({bouts});
-    });
+    Bout.
+        find({athlete: req.params._id}).
+        populate({ path: "opponent", select: 'name club'}).
+        exec( function(err, bouts) {
+            if (err) { res.status(500).json({"error": "Database Error"});}
+            res.json({bouts});
+        });
 });
 
 /**
