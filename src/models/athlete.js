@@ -3,6 +3,7 @@ import kt from "kennitala";
 
 // TODO: change import to import { Schema } from "mongoose";
 const Schema = mongoose.Schema;
+import Club from "./club";
 
 
 const AthleteSchema = new Schema({
@@ -19,17 +20,30 @@ const AthleteSchema = new Schema({
     ssn: {
         type: String,
         require: true,
+        // Notice, unique is not a validator, it only creates indexes.
         unique: true,
         validate: {
             validator: function(ssn) {
-                console.log("Validating KT ----:", ssn);
-                return kt.isValid(ssn) && kt.isPerson();
+                return kt.isValid(ssn) && kt.isPerson(ssn);
             },
             message: 'Not a valid SSN'
         }
     },
     club: {
-        type: String
+        type: String,
+        validate: function(club) {
+            return new Promise( (resolve, reject) => {
+                Club.find({shorthand: club.toUpperCase()})
+                    .exec(function (err, clubs) {
+                        let valid = false;
+                        if (clubs && clubs.length > 0) {
+                            valid = true;
+                        }
+                        resolve(valid);
+                    });
+            });
+        },
+        message: 'Club not found'
     },
     achievements: {
         diploma: Date,
@@ -40,7 +54,5 @@ const AthleteSchema = new Schema({
 }, {
     timestamps: true
 });
-
-//AthleteSchema.index({'': ''})
 
 export default mongoose.model("Athlete", AthleteSchema);

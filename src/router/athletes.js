@@ -10,6 +10,8 @@
 import Router from "express";
 import Athlete from "../models/athlete";
 import Bout from "../models/bout";
+// To be able to run async/await
+import 'babel-polyfill';
 
 const athleteRouter = new Router();
 
@@ -28,15 +30,15 @@ athleteRouter.get('/', (req, res, next) => {
  * Creates a new athlete and saves it in mongo
  * POST /api/v1/athletes
  */
-athleteRouter.post('/', (req, res, next) => {
+athleteRouter.post('/', async (req, res, next) => {
     // TODO: Validate input
     const name = req.body.name;
-    const ssn = req.body.ssn
+    const ssn = req.body.ssn;
     const club = req.body.club;
     const tmpAchievements = req.body.achievements;
 
-    Athlete.findOne({ssn: ssn}, (err, existingUser) => {
-        if (err ) { return next(err);}
+    try {
+        const existingUser = await Athlete.findOne({ssn: ssn})
         if (existingUser) {
             return res.status(400).send({error: "Athlete already exists"});
         }
@@ -47,26 +49,19 @@ athleteRouter.post('/', (req, res, next) => {
             club: club,
             achievements: tmpAchievements
         });
-        athlete.validate()
-            .then( valid => {
-                return athlete.save();
-            }, notValid => {
-                res.status(400).send({error: notValid.message});
-                // FIXME: This is a issue, it goes to the next .then() 
-                // and tries to set header after they are set
-            })
-            .then( success => {
-                console.log("trying to set header after validation had failed");
-                return res.status(201).json({athlete});
-            }, fail => {
-                console.log("Could not save athlete: ", fail);
-                res.status(400).send({error: fail});
-            })
-            .catch( error => {
-                console.log("caught some error:", error);
-                return next(error);
-            })
-    });
+
+        const validateResponse = await athlete.validate();
+        console.log('validator response: ', validateResponse);
+        await athlete.save();
+        return res.status(201).json({athlete});
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({error: error.message} );
+        } else {
+            // FIXME: This needs to be logged properly!!
+            return res.status(500).json({error: "Error saving athlete, check logs for details"});
+        }
+    }
 });
 
 
@@ -88,7 +83,7 @@ athleteRouter.get("/:_id/bouts", (req, res, next) => {
  * Creates a new bout and saves it in mongo
  * POST /api/v1/athlete/:_id/bouts
  */
-athleteRouter.post("/:_id/bouts", (req, res, next) => {
+athleteRouter.post("/:_id/bouts", async (req, res, next) => {
     let bout = new Bout({
         athlete: req.params._id,
         opponent: req.body.opponent,
@@ -98,21 +93,18 @@ athleteRouter.post("/:_id/bouts", (req, res, next) => {
         eventOrganizer: req.body.eventOrganizer
     });
 
-    bout.validate()
-        .then(valid => {
-            return bout.save();
-        }, notValid => {
-            res.status(400).send({error: notValid.message});
-        })
-        .then( success => {
-            return res.status(201).json({bout});
-        }, fail => {
-            console.log("could not save: ", fail);
-            res.status(400).send({error: fail});
-        })
-        .catch( (error) => {
-            return next(error);
-        });
+    try {
+        await bout.validate();
+        await bout.save();
+        return res.status(201).json({bout});
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({error: error.message} );
+        } else {
+            // FIXME: This needs to be logged properly!!
+            return res.status(500).json({error: "Error saving bout, check logs for details"});
+        }
+    }
 
 });
 
