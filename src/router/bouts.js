@@ -62,7 +62,7 @@ boutRouter.post("/", async (req, res, next) => {
             return res.status(400).json({error: error.message} );
         } else {
             // FIXME: This needs to be logged properly!!
-            return res.status(400).json({error: "Error saving club, check logs for details"});
+            return res.status(500).json({error: "Error saving bout, check logs for details"});
         }
     }
 
