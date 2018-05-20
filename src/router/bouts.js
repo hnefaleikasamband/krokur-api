@@ -5,6 +5,8 @@
 
 import Router from "express";
 import Bout from "../models/bout";
+// To be able to run async/await
+import 'babel-polyfill';
 
 const boutRouter = new Router();
 
@@ -40,32 +42,29 @@ boutRouter.get("/:id?", (req, res, next) => {
  * Creates a new bout and saves it in mongo
  * POST /api/v1/bouts
  */
-boutRouter.post("/bouts", (req, res, next) => {
+boutRouter.post("/", async (req, res, next) => {
     let bout = new Bout({
         athlete: req.body.athelte,
         opponent: req.body.opponent,
+        club: req.body.club,
         type: typeof req.body.type === "string" ? req.body.type.toUpperCase() : "",
         date: req.body.date,
         points: req.body.points,
         eventOrganizer: req.body.eventOrganizer
     });
 
-    bout.validate()
-        .then( valid => {
-            return bout.save();
-        }, notValid => {
-            res.status(400).send({error: notValid.message});
-        })
-        .then( success => {
-            return res.status(201).json({bout});
-            // FIXME: This is a issue, it goes to the next .then() 
-                // and tries to set header after they are set
-        }, fail => {
-            console.log("could not save: ", fail);
-            res.status(400).send({error: fail});
-        })
-        .catch( (error) => {
-            return next(error);
-        });
+    try {
+        await bout.validate();
+        await bout.save();
+        return res.status(201).json({bout});
+    } catch (error) {
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({error: error.message} );
+        } else {
+            // FIXME: This needs to be logged properly!!
+            return res.status(400).json({error: "Error saving club, check logs for details"});
+        }
+    }
+
 });
 export default boutRouter;

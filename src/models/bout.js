@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 // TODO: change import to import { Schema } from "mongoose";
 const Schema = mongoose.Schema;
@@ -15,7 +15,9 @@ const BoutSchema = new Schema({
         ref: 'Athlete',
         required: true
     },
-    // TODO: Club needs to be signed specially if opponent changes clubs
+    club: {
+        type: String
+    },
     type: {
         type: String,
         enum: ["A", "B", "C"],
