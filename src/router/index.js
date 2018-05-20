@@ -9,6 +9,7 @@ import passport from "passport";
 import AuthAccess from "./authentication";
 import athletes from "./athletes";
 import bouts from "./bouts";
+import club from "./clubs";
 
 
 // Middleware for login and auth
@@ -30,6 +31,7 @@ export default function (app) {
 
     apiRoutes.use("/athletes", athletes);
     apiRoutes.use("/bouts", bouts);
+    apiRoutes.use("/clubs", club);
     apiRoutes.use("/auth", authRoutes);
 
     authRoutes.post("/register", AuthAccess.register);
