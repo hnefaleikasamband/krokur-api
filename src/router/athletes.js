@@ -87,6 +87,7 @@ athleteRouter.post("/:_id/bouts", async (req, res, next) => {
     let bout = new Bout({
         athlete: req.params._id,
         opponent: req.body.opponent,
+        club: req.body.club,
         type: typeof req.body.type === "string" ? req.body.type.toUpperCase() : "",
         date: req.body.date,
         points: req.body.points,

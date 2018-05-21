@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Club from "./club";
 
 // TODO: change import to import { Schema } from "mongoose";
 const Schema = mongoose.Schema;
@@ -17,6 +18,7 @@ const BoutSchema = new Schema({
     },
     club: {
         type: String,
+        required: true,
         validate: function(club) {
             return new Promise( (resolve, reject) => {
                 Club.find({shorthand: club.toUpperCase()})
@@ -45,9 +47,10 @@ const BoutSchema = new Schema({
     },
     eventOrganizer: {
         type: String,
-        validate: function(club) {
+        required: true,
+        validate: function(eventOrganizer) {
             return new Promise( (resolve, reject) => {
-                Club.find({shorthand: club.toUpperCase()})
+                Club.find({shorthand: eventOrganizer.toUpperCase()})
                     .exec(function (err, clubs) {
                         let valid = false;
                         if (clubs && clubs.length > 0) {
@@ -59,7 +62,6 @@ const BoutSchema = new Schema({
         },
         message: 'Organizer not found'
     }
-
 }, {
     timestamps: true
 });
