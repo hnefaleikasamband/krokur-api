@@ -56,7 +56,8 @@ boutRouter.post("/", async (req, res, next) => {
     try {
         await bout.validate();
         await bout.save();
-        return res.status(201).json({bout});
+        const newBout = await Bout.findOne({_id : bout._id }).populate({ path: "opponent", select: 'name'});
+        return res.status(201).json({bout: newBout});
     } catch (error) {
         if (error.name === 'ValidationError') {
             return res.status(400).json({error: error.message} );
