@@ -42,4 +42,5 @@ export default function (app) {
     })
 
     app.use("/api/v1", apiRoutes);
+    app.use("/", authRoutes);
 };
