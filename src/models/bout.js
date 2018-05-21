@@ -45,7 +45,19 @@ const BoutSchema = new Schema({
     },
     eventOrganizer: {
         type: String,
-        required: true
+        validate: function(club) {
+            return new Promise( (resolve, reject) => {
+                Club.find({shorthand: club.toUpperCase()})
+                    .exec(function (err, clubs) {
+                        let valid = false;
+                        if (clubs && clubs.length > 0) {
+                            valid = true;
+                        }
+                        resolve(valid);
+                    });
+            });
+        },
+        message: 'Organizer not found'
     }
 
 }, {
