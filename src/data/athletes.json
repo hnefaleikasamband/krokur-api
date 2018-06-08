@@ -1,0 +1,54 @@
+{
+  "athletes": [
+    {
+      "name": "Fjóla Ketilsdóttir",
+      "ssn": "1909056839",
+      "club": "HFH"
+    }, 
+    {
+      "name": "Nikíta Októvía Reginsdóttir",
+      "ssn": "2412518459",
+      "club": "HFK"
+    }, 
+    {
+      "name": "Nóam Natanaelsson",
+      "ssn": "2008552729",
+      "club": "HR"
+    }, 
+    {
+      "name": "Drengur Freygarður Sævarsson",
+      "ssn": "2707293559",
+      "club": "HR"
+    }, 
+    {
+      "name": "Kjói Kópur Elvarsson",
+      "ssn": "2912017769",
+      "club": "HFA"
+    },
+    {
+      "name": "Austri Jörvar Salmannsson",
+      "ssn": "1905017879",
+      "club": "HFH"
+    }, 
+    {
+      "name": "Bergjón Valur Rögnvarsson",
+      "ssn": "1212409049",
+      "club": "HFB"
+    }, 
+    {
+      "name": "Ásvaldur Diljar Hildibergsson",
+      "ssn": "1305617059",
+      "club": "HFK"
+    }, 
+    {
+      "name": "Veig Hjálmgeirsdóttir",
+      "ssn": "0206998769",
+      "club": "HFH"
+    }, 
+    {
+      "name": "Falur Búrason",
+      "ssn": "1002246239",
+      "club": "HFA"
+    }
+  ]
+}
