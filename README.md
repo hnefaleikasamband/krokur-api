@@ -31,8 +31,12 @@ If you just installed NVM this will set the default to use 8.9.4, but if you whe
 
 If you haven't already, now is the time to clone the repo
 ```
-
 git clone git@git.mikligardur.com:HNI/diploma-umsysla.git
+```
+
+If you are considering contributing to the project we recommend using the dev branch
+```
+git checkout dev
 ```
 
 ### Install node dependencies
@@ -67,7 +71,7 @@ Currently there are no automated tests.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md]() for details on our code of conduct, and the process for submitting pull requests to us.
 
 ## Versioning
 
