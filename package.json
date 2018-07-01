@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "babel-watch src/app.js",
-    "build": "babel src/app.js -d dist"
+    "build": "babel src/app.js -d dist",
+    "seed": "babel-node src/dbSeeder.js"
   },
   "repository": {
     "type": "git",
