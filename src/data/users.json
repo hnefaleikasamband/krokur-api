@@ -1,0 +1,39 @@
+{
+  "users": [
+    {
+      "email": "vapni.gauksson40@mailinator.com",
+      "password": "fcAcOI8U#KJCaERz", 
+      "name": "Vapni Gauksson", 
+      "club:": "HFH",
+      "disabled": "false"
+    }, 
+    {
+      "email": "vagna.mjollnisdottir22@mailinator.com",
+      "password": "6AMTSYFoIcxBW99N", 
+      "name": "Vagna Mjlöllnisdóttir", 
+      "club": "HR",
+      "disabled":"false"
+    }, 
+    {
+      "email": "gloria.steingerdur.lauritzdottir71@mailinator.com",
+      "password": "70U5&rlfLFlJm%ar", 
+      "name": "Gloría Steingerður Lauritzdóttir", 
+      "club": "HFA",
+      "disabled":"false"
+    }, 
+    {
+      "email": "ork.haleygsdottir11@mailinator.com",
+      "password": "UAs8t$LSzgbbGos1", 
+      "name": "Örk Háleygsdóttir", 
+      "club": "HFK",
+      "disabled":"false"
+    }, 
+    {
+      "email": "hilarius.lydsson80@mailinator.com",
+      "password": "Phuo1rtWiccd7yaF", 
+      "name": "Hilaríus Lýðsson", 
+      "club": "HFH",
+      "disabled":"false"
+    }
+  ]
+}

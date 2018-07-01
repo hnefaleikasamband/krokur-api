@@ -1,0 +1,29 @@
+{
+  "clubs": [
+    {
+      "name": "Hnefaleikafélag Hafnarfjarðar",
+      "shorthand": "HFH",
+      "info": "Staðsett í Hafnarfirði."
+    }, 
+    {
+      "name": "Hnefaleikafélag Reykjavíkur",
+      "shorthand": "HR",
+      "info": "Staðett í Reykjavík"
+    }, 
+    {
+      "name": "Hnefaleikafélag Akureyrar",
+      "shorthand": "HFA",
+      "info": "Staðsett á Akureyri."
+    }, 
+    {
+      "name": "Hnefaleikafélag Kópavogar",
+      "shorthand": "HFK",
+      "info": "Staðsett í Kópavogi."
+    }, 
+    {
+      "name": "Hnefaleikafélag Bæjarfélags",
+      "shorthand": "HFB",
+      "info": "Staðsett í ákveðnu bæjarfélagi."
+    }
+  ]
+}
