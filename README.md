@@ -51,6 +51,14 @@ Now everything should be set up and you can just run it with
 npm start
 ```
 
+### Create config file
+You need to copy and rename the config file `src/config/main-default.js` to `src/config/main.js` 
+
+```
+cp src/config/main-default.js src/config/main.js
+```
+and then update the file with correct information
+
 ### Seed database.
 If you like to have some dummy data for testing you can run
 ```
