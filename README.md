@@ -46,11 +46,6 @@ cd into the backend directory ( `cd diploma-umsysla/backend` ) and run
 npm install
 ```
 
-Now everything should be set up and you can just run it with
-```
-npm start
-```
-
 ### Create config file
 You need to copy and rename the config file `src/config/main-default.js` to `src/config/main.js` 
 
@@ -63,6 +58,12 @@ and then update the file with correct information
 If you like to have some dummy data for testing you can run
 ```
 npm run seed
+```
+
+### All set up
+Now everything should be set up and you can just run it with
+```
+npm start
 ```
 
 ## Running the tests
