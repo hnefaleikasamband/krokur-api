@@ -78,8 +78,8 @@ exports.register = async function (req, res, next) {
             return res.status(400).json({error: error.message} );
         } else {
             // FIXME: This needs to be logged properly!!
-            console.log("Error saving athlete:", error);
-            return res.status(500).json({error: "Error saving athlete, check logs for details"});
+            console.log("Error saving user:", error);
+            return res.status(500).json({error: "Error saving user, check logs for details"});
         }
     }
 };
@@ -116,3 +116,21 @@ exports.hasAccess = function(access) {
       });
     }
 }
+
+//========================================
+// List Users
+//========================================
+exports.getUsers = async function (req, res, next) {
+    try {
+        // TODO: We will need to clean up this data before sending it (e.g. passwords)
+        const users = await User.find({});
+
+        res.status(201).json({
+            users
+        });
+    } catch (error) {
+        // FIXME: This needs to be logged properly!!
+        console.log("Error fetching users from database:", error);
+        return res.status(500).json({error: "Error fetching users from database"});
+    }
+};

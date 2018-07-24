@@ -34,6 +34,7 @@ export default function (app) {
     apiRoutes.use("/clubs", club);
     apiRoutes.use("/auth", authRoutes);
 
+    authRoutes.get("/users", AuthAccess.getUsers);
     authRoutes.post("/register", AuthAccess.register);
     authRoutes.post("/login", requireLogin, AuthAccess.login);
 
