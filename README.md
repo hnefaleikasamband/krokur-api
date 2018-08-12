@@ -21,12 +21,12 @@ We highly recommend using a version manager for node like [NVM](https://github.c
 ## Installing
 *Notice! the latter expects you are installing on Ubuntu, you can follow along with most of the commands for other operating systems but keep this in mind.*
 
-After installing both MongoDB and NVM we will start by installing Node 8.9.4.
+After installing both MongoDB and NVM we will start by installing Node 10.7.0.
 ```
-nvm install 8.9.4
+nvm install 10.7.0
 ``` 
 
-If you just installed NVM this will set the default to use 8.9.4, but if you where using another version add `nvm use 8.9.4`.
+If you just installed NVM this will set the default to use 10.7.0, but if you where using another version add `nvm use 10.7.0`.
 
 
 If you haven't already, now is the time to clone the repo
