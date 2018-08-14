@@ -29,13 +29,14 @@ export default function (app) {
     const apiRoutes = new Router();
     const authRoutes = new Router();
 
-    apiRoutes.use("/athletes", athletes);
-    apiRoutes.use("/bouts", bouts);
-    apiRoutes.use("/clubs", club);
+    apiRoutes.use("/athletes", requireAuth, athletes);
+    apiRoutes.use("/bouts", requireAuth, bouts);
+    apiRoutes.use("/clubs", requireAuth, club);
+    apiRoutes.get("/users", requireAuth, AuthAccess.getUsers);
+    apiRoutes.post("/users", requireAuth, AuthAccess.register);
     apiRoutes.use("/auth", authRoutes);
 
-    authRoutes.get("/users", AuthAccess.getUsers);
-    authRoutes.post("/register", AuthAccess.register);
+    authRoutes.post("/register", requireAuth, AuthAccess.register);
     authRoutes.post("/login", requireLogin, AuthAccess.login);
 
     apiRoutes.get("/", requireAuth, (req, res, next) => {
