@@ -68,9 +68,13 @@ UserSchema.pre("save", function (next) {
     if( !user.isModified("password")) return next();
 
     bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
-        bcrypt.hash(user.password, salt, null, (err, hash) => {
+        bcrypt.hash(user.password, salt, (err, hash) => {
             if (err) return next(err);
+            console.log(user.password);
+            console.log("salt:", salt);
+            console.log("hash:",hash);
             user.password = hash;
+            console.log(user);
             next();
         });
     });
@@ -79,6 +83,8 @@ UserSchema.pre("save", function (next) {
 // Comparing passwords
 
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
+    console.log("'this' password:", this.password);
+    console.log("--", this);
     bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
         if (err) return cb(err);
         cb(null, isMatch);
