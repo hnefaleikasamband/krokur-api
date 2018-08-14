@@ -29,7 +29,12 @@ exports.login = function (req, res, next) {
 
     res.status(200).json({
         token: "JWT " + generateToken(userInfo),
-        user: userInfo,
+        // TODO: Revisit this and decide if we want to decode JWT in frontend or send like this.
+        user: {
+            name: userInfo.name,
+            email: userInfo.email,
+            access: userInfo.access
+        },
         expiresIn: 10800
     });
 };
