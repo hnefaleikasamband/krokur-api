@@ -28,9 +28,6 @@ mongoose.connect(config.database)
         console.log("Server is running on port: ", config.port);
 
         app.use(log("dev")); // Using morgan for logging express requests
-        app.use(bodyParser.urlencoded({extended: false})) // Parses urlencoded bodies
-        app.use(bodyParser.json()); // Send JSON responses
-
         app.use(function(req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
@@ -41,6 +38,11 @@ mongoose.connect(config.database)
             res.header("Access-Control-Allow-Credentials", "true");
             next();
         });
+
+        app.use(bodyParser.urlencoded({extended: false})) // Parses urlencoded bodies
+        app.use(bodyParser.json()); // Send JSON responses
+
+        
 
         router(app);
 
