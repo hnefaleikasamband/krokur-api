@@ -38,6 +38,7 @@ export default function (app) {
 
     authRoutes.post("/register", requireAuth, AuthAccess.register);
     authRoutes.post("/login", requireLogin, AuthAccess.login);
+    authRoutes.get("/user", requireAuth, AuthAccess.authedUser);
 
     apiRoutes.get("/", requireAuth, (req, res, next) => {
         res.json({success: true})
