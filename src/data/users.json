@@ -1,6 +1,12 @@
 {
   "users": [
     {
+      "email": "admin@admin.is",
+      "password": "admin", 
+      "name": "Administrator", 
+      "disabled": "false"
+    },
+    {
       "email": "vapni.gauksson40@mailinator.com",
       "password": "fcAcOI8U#KJCaERz", 
       "name": "Vapni Gauksson", 
