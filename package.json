@@ -1,27 +1,34 @@
 {
   "name": "hni-diploma",
-  "version": "0.0.1",
-  "description": "Umsýsla stiga fyrir diploma keppendur.",
+  "version": "0.1.0",
+  "description": "API for managing youth points for diploma boxing.",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-watch src/app.js",
-    "build": "babel src/app.js -d dist",
-    "seed": "babel-node src/dbSeeder.js"
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "start": "nodemon --exec babel-node src/app.js",
+    "build": "babel -d dist src -s",
+    "seed": "babel-node src/dbSeeder.js",
+    "clean": "rm -rf dist",
+    "lint": "eslint src/ --quiet",
+    "validate": "npm run lint; npm run test && npm outdated --depth 0"
   },
   "repository": {
     "type": "git",
     "url": "git@git.mikligardur.com:HNI/diploma-umsysla.git"
   },
   "author": "GDGunnars",
-  "license": "UNLICENSED",
+  "license": "GPL-3",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-watch": "^2.0.7",
-    "jslint": "^0.12.0"
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.1",
+    "@babel/node": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "eslint": "^5.5.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "nodemon": "^1.18.4"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
