@@ -5,6 +5,7 @@
  */
 import Router from 'express';
 import passport from 'passport';
+import '../config/passport';
 import AuthAccess from './authentication';
 import athletes from './athletes';
 import bouts from './bouts';
@@ -42,5 +43,5 @@ export default function (app) {
   });
 
   app.use('/api/v1', apiRoutes);
-  app.use('/', authRoutes);
+  // app.use('/', authRoutes);
 }
