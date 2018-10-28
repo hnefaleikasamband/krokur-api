@@ -24,7 +24,7 @@ function setUserInfo(request) {
 // Login Route, this fn is only called if
 // the passport un/pw login is successful.
 // ========================================
-module.login = function login(req, res) {
+exports.login = function login(req, res) {
   const userInfo = setUserInfo(req.user);
 
   res.status(200).json({
