@@ -1,6 +1,6 @@
-# Diploma Boxing Backend
+# Krókur API
 
-This is the backend for the Diploma boxing project. It handles all requests regarding data being displayed on the angular frontend.
+This is the backend for the Diploma boxing project Krókur. It handles all requests regarding data being displayed on the angular frontend.
 
 ## Getting Started
 

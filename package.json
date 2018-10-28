@@ -1,6 +1,6 @@
 {
-  "name": "hni-diploma",
-  "version": "0.1.0",
+  "name": "krokur-api",
+  "version": "0.1.1",
   "description": "API for managing youth points for diploma boxing.",
   "private": true,
   "scripts": {
@@ -17,7 +17,7 @@
     "url": "git@git.mikligardur.com:HNI/diploma-umsysla.git"
   },
   "author": "GDGunnars",
-  "license": "GPL-3",
+  "license": "GPL-3.0",
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.1",
