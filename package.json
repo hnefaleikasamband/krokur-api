@@ -6,12 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "start": "nodemon --exec babel-node src/app.js",
-    "build": "babel -d dist src -s",
+    "build": "npm run clean; babel -d dist src -s",
     "seed": "babel-node src/dbSeeder.js",
     "clean": "rm -rf dist",
     "lint": "eslint src/ --quiet",
     "validate": "npm run lint; npm run test && npm outdated --depth 0",
-    "docker": "npm run build; docker-compose up --build"
+    "docker": "mkdir -p ./db; npm run build; docker-compose up --build"
   },
   "repository": {
     "type": "git",
