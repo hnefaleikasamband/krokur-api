@@ -15,13 +15,13 @@ import router from './router/index';
 // Use native promises
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database).then(
-  (db) => {
+  () => {
     // FIXME: Use Winston logging for messages like these.
     console.log('Connected to MongoDB');
 
     // Start the server
     const app = express();
-    const server = app.listen(config.port);
+    app.listen(config.port);
     // FIXME: use winston
     console.log('Server is running on port: ', config.port);
 

@@ -1,7 +1,3 @@
-/**
- * @version 2018.03.25
- */
-
 import jwt from 'jsonwebtoken';
 import config from '../config/main';
 import User from '../models/user';
@@ -16,6 +12,7 @@ function generateToken(user) {
 
 function setUserInfo(request) {
   return {
+    // eslint-disable-next-line
     _id: request._id,
     name: request.name,
     email: request.email,
@@ -27,7 +24,7 @@ function setUserInfo(request) {
 // Login Route, this fn is only called if
 // the passport un/pw login is successful.
 // ========================================
-exports.login = function (req, res, next) {
+module.login = function login(req, res) {
   const userInfo = setUserInfo(req.user);
 
   res.status(200).json({
@@ -45,23 +42,22 @@ exports.login = function (req, res, next) {
 // ========================================
 // Return the User who owns the JWT token
 // ========================================
-exports.authedUser = function (req, res, next) {
+exports.authedUser = function authedUser(req, res) {
   const userInfo = setUserInfo(req.user);
   if (!req.user || req.user === undefined) {
+    return res.status(404).send();
   }
-  res.status(200).json(userInfo);
+  return res.json(userInfo);
 };
 
 // ========================================
 // Registration Route
 // ========================================
-exports.register = async function (req, res, next) {
+exports.register = async function register(req, res) {
   // Check for registration errors
-  const email = req.body.email;
-  const name = req.body.name;
-  const password = req.body.password;
-  const access = req.body.access;
-  const club = req.body.club;
+  const {
+    email, name, password, access, club,
+  } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -111,10 +107,11 @@ const accessAvailable = {
 };
 
 // Role authorization check
-exports.hasAccess = function (access) {
-  return function (req, res, next) {
-    const user = req.user;
+exports.hasAccess = function hasAccess(access) {
+  return (req, res, next) => {
+    const { user } = req;
 
+    // eslint-disable-next-line
     User.findById(user._id, (err, foundUser) => {
       if (err) {
         res.status(422).json({ error: 'No user was found.' });
@@ -135,14 +132,12 @@ exports.hasAccess = function (access) {
 // ========================================
 // List Users
 // ========================================
-exports.getUsers = async function (req, res, next) {
+exports.getUsers = async function getUsers(req, res) {
   try {
     // TODO: We will need to clean up this data before sending it (e.g. passwords)
     const users = await User.find({});
 
-    res.status(201).json({
-      users,
-    });
+    return res.status(201).json({ users });
   } catch (error) {
     // FIXME: This needs to be logged properly!!
     console.log('Error fetching users from database:', error);
