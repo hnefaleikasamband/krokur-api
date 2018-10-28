@@ -61,4 +61,5 @@ typings/
 .next
 
 dist/*
-
+# Docker database folder, should not be pushed to git.
+db/*
