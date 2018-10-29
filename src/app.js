@@ -8,6 +8,7 @@ import log from 'morgan';
 import bodyParser from 'body-parser';
 import config from './config/main';
 import router from './router/index';
+import checkSuperUser from './initAppRun';
 
 // If we can't connect to the database we can't send any data back
 // from requests so we only run the app when mongoose connects.
@@ -15,9 +16,10 @@ import router from './router/index';
 // Use native promises
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database).then(
-  () => {
+  async () => {
     // FIXME: Use Winston logging for messages like these.
     console.log('Connected to MongoDB');
+    await checkSuperUser();
 
     // Start the server
     const app = express();
