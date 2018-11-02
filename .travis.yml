@@ -3,7 +3,8 @@ language: node_js
 
 # Keep empty to use value from .nvmrc
 #node_js: null
-node_js: v10.7.0
+node_js:
+  - "10"
 
 services:
   - docker
