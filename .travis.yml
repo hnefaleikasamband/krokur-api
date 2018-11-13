@@ -2,9 +2,9 @@ sudo: false
 language: node_js
 
 # Keep empty to use value from .nvmrc
-#node_js: null
-node_js:
-  - "10"
+node_js: null
+#node_js:
+#  - "10"
 
 services:
   - docker
@@ -15,7 +15,8 @@ before_install:
 script:
   #- npm run validate
   - npm run build
-  - npm run docker
+  #- npm run docker
+  - docker build -t krokur-api .
 branches:
   only:
     - master
