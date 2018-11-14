@@ -6,7 +6,7 @@ RUN mkdir -p /usr/local/share/app
 WORKDIR /usr/local/share/app
 
 COPY ./package.json package-lock.json /usr/local/share/app/
-COPY .npmrc /usr/local/share/app/
+COPY .nvmrc /usr/local/share/app/
 RUN npm install --production
 COPY dist /usr/local/share/app
 
