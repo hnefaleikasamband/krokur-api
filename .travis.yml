@@ -10,7 +10,7 @@ services:
   - docker
 
 before_install:
-  - cp ~/.nvmrc .
+  - cp ~/.npmrc .
 
 script:
   #- npm run validate
