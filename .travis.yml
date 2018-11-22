@@ -1,23 +1,16 @@
 sudo: false
 language: node_js
-
-# Keep empty to use value from .nvmrc
-node_js: null
-#node_js:
-#  - "10"
-
+node_js: 
 services:
-  - docker
-
+- docker
 before_install:
-  - cp ~/.npmrc .
-
+- openssl aes-256-cbc -K $encrypted_c332ac9a4107_key -iv $encrypted_c332ac9a4107_iv
+  -in deploy_rsa.enc -out deploy_rsa -d
+- cp ~/.npmrc .
 script:
-  #- npm run validate
-  - npm run build
-  #- npm run docker
-  - docker build -t krokur-api .
+- npm run build
+- docker build -t krokur-api .
 branches:
   only:
-    - master
-    - dev 
+  - master
+  - dev
