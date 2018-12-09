@@ -10,14 +10,16 @@ script:
 - echo $STAGING_URI:22022
 - npm run build
 - docker build -t krokur-api .
-  on:
-    branch:
-    - master
-    - dev
+
+branches:
+  only:
+  - master
+  - dev
 
 addons:
-  ssh_known_hosts: $STAGING_URI:22022
-  ssh_known_hosts: $PRODUCTION_URI
+  ssh_known_hosts: 
+  - $STAGING_URI:22022
+  - $PRODUCTION_URI
 
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_c332ac9a4107_key -iv $encrypted_c332ac9a4107_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
