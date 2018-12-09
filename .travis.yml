@@ -4,7 +4,7 @@ services:
 - docker
 
 before_install:
-- cp ~/.npmrc .
+- cp .nvmrc .
 
 script:
 - echo $STAGING_URI:22022
