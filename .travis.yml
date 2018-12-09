@@ -16,7 +16,7 @@ branches:
 addons:
   ssh_known_hosts: 
   - staging.mikligardur.com:22022
-  - $PRODUCTION_URI
+  - krokur.hni.is
 
 before_deploy:
 - openssl aes-256-cbc -K $encrypted_c332ac9a4107_key -iv $encrypted_c332ac9a4107_iv -in deploy_rsa.enc -out /tmp/deploy_rsa -d
@@ -27,7 +27,8 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  #script: rsync -r --delete-after --quiet -e "ssh -p  " $TRAVIS_BUILD_DIR/<dir> travis@$STAGING_URI:~/krokur-api/
-  script: ssh $USER@$STAGING_URI -p 22022 -v exit
+  script: docker save $TRAVIS_BUILD_DIR/krokur-api > $TRAVIS_BUILD_DIR/krokur-api.tar; ls -al
+  script: rsync -r --delete-after --quiet -e "ssh -p  " $TRAVIS_BUILD_DIR/krokur-api.tar travis@$STAGING_URI:~/krokur-api/krokur-api.tar
+  #script: ssh $USER@$STAGING_URI -p 22022 -v exit
   on:
     branch: master
