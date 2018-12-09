@@ -3,9 +3,6 @@ node_js:
 services:
 - docker
 
-before_install:
-- cp .nvmrc .
-
 script:
 - echo $STAGING_URI:22022
 - npm run build
