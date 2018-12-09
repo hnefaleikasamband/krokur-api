@@ -4,7 +4,6 @@ services:
 - docker
 
 script:
-- echo $STAGING_URI:22022
 - npm run build
 - docker build -t krokur-api .
 
@@ -23,7 +22,7 @@ before_deploy:
 - eval "$(ssh-agent -s)"
 - chmod 600 /tmp/deploy_rsa
 - ssh-add /tmp/deploy_rsa
-- docker save $TRAVIS_BUILD_DIR/krokur-api > $TRAVIS_BUILD_DIR/krokur-api.tar
+- docker save krokur-api > $TRAVIS_BUILD_DIR/krokur-api.tar
 
 deploy:
   provider: script
