@@ -1,4 +1,4 @@
-FROM node:10.7.0
+FROM keymetrics/pm2:10-alpine
 EXPOSE 80
 
 # Setup app dir

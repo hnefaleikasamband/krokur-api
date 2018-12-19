@@ -27,7 +27,7 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: rsync -r --delete-after --quiet -e "ssh -p 22022" $TRAVIS_BUILD_DIR/krokur-api.tar travis@$STAGING_URI:~/krokur-api/krokur-api.tar
+  script: rsync -rv --delete-after --progress -e "ssh -p 22022" $TRAVIS_BUILD_DIR/krokur-api.tar travis@$STAGING_URI:~/krokur-api/krokur-api.tar
   #script: ssh $USER@$STAGING_URI -p 22022 -v exit
   on:
     branch: master
