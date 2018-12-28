@@ -43,5 +43,7 @@ export default function (app) {
   });
 
   app.use('/api/v1', apiRoutes);
+  app.get('/health-check', (req, res) => res.json({ message: "I'm running" }));
+
   // app.use('/', authRoutes);
 }
