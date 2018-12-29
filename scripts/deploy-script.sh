@@ -15,7 +15,7 @@ PROJECT_FOLDER="krokur-api"
 IMAGE_ARCHIVE_NAME="krokur-api.tar"
 
 # Move the archived image to server
-printf "\- Moving %s to \n" "$IMAGE_ARCHIVE_NAME"
+printf "\- Copy %s over to server\n" "$IMAGE_ARCHIVE_NAME"
 rsync -rv --delete-after --progress -e "ssh -p 22022" $TRAVIS_BUILD_DIR/$IMAGE_ARCHIVE_NAME travis@$URI:~/$PROJECT_FOLDER/$IMAGE_ARCHIVE_NAME
 printf "\- Copy docker-compose.yml over to server\n"
 rsync -rv --delete-after --progress -e "ssh -p 22022" $TRAVIS_BUILD_DIR/docker-compose.yml travis@$URI:~/$PROJECT_FOLDER/docker-compose.yml
