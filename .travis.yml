@@ -29,7 +29,7 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: $TRAVIS_BUILD_DIR/deploy-script.sh
+  script: $TRAVIS_BUILD_DIR/scripts/deploy-script.sh
   #script: ssh $USER@$STAGING_URI -p 22022 -v exit
   on:
     branch: master
