@@ -27,7 +27,8 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: ./deploy-script.sh
+  script: 
+    - deploy-script.sh
   #script: ssh $USER@$STAGING_URI -p 22022 -v exit
   on:
     branch: master
