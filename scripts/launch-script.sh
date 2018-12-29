@@ -12,7 +12,7 @@ docker load -i $IMAGE_ARCHIVE_NAME
 mkdir -p ./db; docker-compose up -d --build
 
 # Remove the archived image
-printf "- Removing %s from server\n" "$IMAGE_ARCHIVE_NAME"
+printf "\- Removing %s from server\n" "$IMAGE_ARCHIVE_NAME"
 rm $IMAGE_ARCHIVE_NAME
 
 # Check if we have a dangling <none> images and remove them if so
@@ -20,5 +20,5 @@ if [ "$(docker images -f "dangling=true" -q | awk '{print $3}' | sort -u)x" != "
 then
   docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
 fi
-
+ 
 echo "--- Launch script has finished ---"
