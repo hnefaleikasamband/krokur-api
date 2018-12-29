@@ -28,6 +28,8 @@ deploy:
   provider: script
   skip_cleanup: true
   script: 
+    - ls -al
+    - pwd
     - deploy-script.sh
   #script: ssh $USER@$STAGING_URI -p 22022 -v exit
   on:
