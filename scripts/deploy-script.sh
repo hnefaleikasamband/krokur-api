@@ -2,13 +2,14 @@
 echo "--- Deploy script is loading ---"
 echo "Checking if TRAVIS_TAG is present: "
 echo $TRAVIS_TAG
-if [[ ! $TRAVIS_TAG ]]; 
+if [[ -z "$TRAVIS_TAG" ]]; 
 then
-  URI=$PRODUCTION_URI
-  PORT="22"
-else
+  # Variables is empty or 
   URI=$STAGING_URI
   PORT="22022"
+else
+  URI=$PRODUCTION_URI
+  PORT="22"
 fi
 
 echo "Printing out $URI & $PORT"
