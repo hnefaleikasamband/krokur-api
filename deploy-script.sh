@@ -1,12 +1,14 @@
 #!/bin/bash
 echo "--- Deploy script is loading ---"
-if [[ $ENV = "staging" ]]; 
+echo "Checking if TRAVIS_TAG is present: "
+echo $TRAVIS_TAG
+if [[ ! $TRAVIS_TAG ]]; 
 then
-  URI=$STAGING_URI
-  PORT=22022
-else
   URI=$PRODUCTION_URI
   PORT=22
+else
+  URI=$STAGING_URI
+  PORT=22022
 fi
 
 PROJECT_FOLDER=krokur-api

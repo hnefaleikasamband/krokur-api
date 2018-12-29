@@ -25,8 +25,6 @@ before_deploy:
 - docker save krokur-api > $TRAVIS_BUILD_DIR/krokur-api.tar
 
 deploy:
-  - if:   tag IS blank
-    env: ENV=staging
   provider: script
   skip_cleanup: true
   script: ./deploy-script.sh
