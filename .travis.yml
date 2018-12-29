@@ -25,9 +25,11 @@ before_deploy:
 - docker save krokur-api > $TRAVIS_BUILD_DIR/krokur-api.tar
 
 deploy:
+  - if:   tag IS blank
+    env: ENV=staging
   provider: script
   skip_cleanup: true
-  script: rsync -rv --delete-after --progress -e "ssh -p 22022" $TRAVIS_BUILD_DIR/krokur-api.tar travis@$STAGING_URI:~/krokur-api/krokur-api.tar
+  script: ./deploy-script.sh
   #script: ssh $USER@$STAGING_URI -p 22022 -v exit
   on:
     branch: master
