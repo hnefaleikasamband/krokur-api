@@ -63,3 +63,6 @@ typings/
 dist/*
 # Docker database folder, should not be pushed to git.
 db/*
+
+# Main config file should not be pushed
+src/config/main.js
