@@ -11,7 +11,8 @@ docker load -i $IMAGE_ARCHIVE_NAME
 # then run docker-compose up with --build to use the new image previously loaded.
 echo "- Image loaded, now running docker-compose"
 mkdir -p ./db
-docker-compose up -d --build
+#docker-compose up -d --build
+docker-compose up --no-deps -d krokur-api-container
 
 # Remove the archived image
 printf "\- Removing %s from server\n" "$IMAGE_ARCHIVE_NAME"
