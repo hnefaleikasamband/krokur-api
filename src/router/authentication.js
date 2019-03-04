@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/main';
-import User from '../models/user';
+// import User from '../models/user';
+import { findUser } from '../db/queries/users';
 // To be able to run async/await
 import '@babel/polyfill';
 
@@ -13,7 +14,7 @@ function generateToken(user) {
 function setUserInfo(request) {
   return {
     // eslint-disable-next-line
-    _id: request._id,
+    id: request.id,
     name: request.name,
     email: request.email,
     access: request.access,
@@ -33,7 +34,6 @@ exports.login = function login(req, res) {
     user: {
       name: userInfo.name,
       email: userInfo.email,
-      access: userInfo.access,
     },
     expiresIn: 10800,
   });
@@ -60,7 +60,7 @@ exports.register = async function register(req, res) {
   } = req.body;
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await findUser(req.db, email);
     if (existingUser) {
       return res.status(400).send({ error: 'User with that email already exists' });
     }
