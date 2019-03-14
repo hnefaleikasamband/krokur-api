@@ -1,7 +1,3 @@
-/**
- * Setting up the API and database connection
- * @version 2018.03.24
- */
 import express from 'express';
 import log from 'morgan';
 import bodyParser from 'body-parser';
@@ -12,7 +8,6 @@ import checkSuperUser from './initAppRun';
 
 try {
   (async () => {
-    // await checkSuperUser();
     const app = express();
 
     app.use(log('dev')); // Using morgan for logging express requests
@@ -37,6 +32,7 @@ try {
     });
 
     const db = PostgresDB();
+    await checkSuperUser(db);
     const dbMiddleWare = (req, res, next) => {
       req.db = db;
       next();

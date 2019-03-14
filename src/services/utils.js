@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { achievementsQueries } from '../db/index';
 
 const hashPassword = async (password) => {
   const SALT_FACTOR = 12;
@@ -6,4 +7,68 @@ const hashPassword = async (password) => {
   return bcrypt.hash(password, salt);
 };
 
-export default { hashPassword };
+/** Async/Await error handler for consistent error handling */
+const dreamCatcher = route => async (req, res) => {
+  try {
+    return await route(req, res);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ error: err.message });
+    }
+    console.log(err);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+const calculateAchievement = (boutsLeft, date) => (boutsLeft <= 0 ? { date, boutsLeft } : { date: null, boutsLeft: parseInt(boutsLeft, 10) - 1 });
+
+const achievementCheck = (achievements, points, date) => {
+  const response = { needsToUpdate: true, updateAchievement: null, achievementName: '' };
+
+  if (points < 27) {
+    return { ...response, needsToUpdate: false };
+  }
+  const {
+    athlete_id: athleteId,
+    diploma_date: diplomaDate,
+    diploma_bouts_left: diplomaBoutsLeft,
+    bronz_date: bronzDate,
+    bronz_bouts_left: bronzBoutsLeft,
+    silver_date: silverDate,
+    silver_bouts_left: silverBoutsLeft,
+    gold_date: goldDate,
+    gold_bouts_left: goldBoutsLeft,
+  } = achievements;
+  let updateAchievement;
+  if (!diplomaDate) {
+    updateAchievement = calculateAchievement(diplomaBoutsLeft, date);
+    response.updateAchievement = achievementsQueries.updateDiploma(updateAchievement);
+    response.achievementName = 'diploma';
+  } else if (!bronzDate) {
+    updateAchievement = calculateAchievement(bronzBoutsLeft, date);
+    response.updateAchievement = achievementsQueries.updateBronz(updateAchievement);
+    response.achievementName = 'bronz';
+  } else if (points >= 31 && !silverDate) {
+    updateAchievement = calculateAchievement(silverBoutsLeft, date);
+    response.updateAchievement = achievementsQueries.updateSilver(updateAchievement);
+    response.achievementName = 'silver';
+  } else if (points >= 35 && !goldDate) {
+    updateAchievement = calculateAchievement(goldBoutsLeft, date);
+    response.updateAchievement = achievementsQueries.updateGold(updateAchievement);
+    response.achievementName = 'gold';
+  } else {
+    response.needsToUpdate = false;
+  }
+  console.log(
+    ` <Achievement-Process> ... Athlete: ${athleteId} update: ${updateAchievement} for achievement: ${
+      response.achievementName
+    }`,
+  );
+  return response;
+};
+
+export default {
+  hashPassword,
+  dreamCatcher,
+  achievementCheck,
+};
