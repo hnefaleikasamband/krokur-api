@@ -5,8 +5,8 @@ CREATE TABLE public.clubs (
 	id uuid default uuid_generate_v4() not null 
     constraint club_pkey 
       primary key,
-  name varchar(255),
-  short_hand varchar(10),
+  name varchar(255) not null,
+  shorthand varchar(10) not null unique,
   created_at timestamp not null default now(),
   updated_at timestamp not null default now()
 );
@@ -31,13 +31,14 @@ CREATE TABLE public.athletes (
 		constraint athletes_pkey
 			primary key,
   name varchar(255),
+  ssn varchar(25) unique,
   club uuid REFERENCES clubs(id),
   created_at timestamp not null default now(),
   updated_at timestamp not null default now()
 );
 
 CREATE TABLE public.achievements (
-	id uuid not null
+	athlete_id uuid not null
 		constraint achievements_pkey
 			primary key
       REFERENCES athletes(id),
@@ -59,10 +60,10 @@ CREATE TABLE public.bouts (
 			primary key,
   athlete_id uuid not null REFERENCES athletes(id),
   athlete_name varchar(255) not null,
-  athlete_club_short_hand varchar(10),
+  athlete_club_shorthand varchar(10),
   opponent_id uuid not null,
   opponent_name varchar(255) not null,
-  opponent_club_short_hand varchar(10),
+  opponent_club_shorthand varchar(10),
   type varchar(2) not null,
   bout_date date not null,
   points numeric(3,1) not null,
