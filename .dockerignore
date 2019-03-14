@@ -6,3 +6,4 @@ environment-*
 README.md
 Dockerfile
 db
+dist
