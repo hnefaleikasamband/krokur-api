@@ -8,4 +8,4 @@ fi
 
 git config user.email "${EMAIL}"
 git config user.name "${USER}"
-git push https://{$TOKEN}{$USER}:${GITHUB_API_KEY}@{$GH_REPO} $BRANCH > /dev/null 2>&1
+git push https://{$USER}:${TOKEN}@{$GH_REPO} $BRANCH > /dev/null 2>&1
