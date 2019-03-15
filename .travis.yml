@@ -30,4 +30,4 @@ deploy:
     skip_cleanup: true
     script: bash scripts/deploy.sh staging
     on:
-      branch: db-migration-switch
+      branch: master
