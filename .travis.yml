@@ -5,7 +5,7 @@ services:
 
 script:
   - npm run build
-  - docker build -t krokur-api .
+  #- docker build -t krokur-api .
 
 env:
   global:
