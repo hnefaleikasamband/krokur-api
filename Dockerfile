@@ -3,7 +3,6 @@ FROM keymetrics/pm2:10-alpine as base
 RUN mkdir -p /usr/local/share/app
 WORKDIR /usr/local/share/app
 COPY ./ /usr/local/share/app/
-CMD ["ls", "-al"]
 RUN npm install
 RUN npm run build
 
