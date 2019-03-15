@@ -1,31 +1,16 @@
-/**
- * Setting up the API and database connection
- * @version 2018.03.24
- */
-import mongoose from 'mongoose';
+// To be able to run async/await
+import '@babel/polyfill';
 import express from 'express';
 import log from 'morgan';
 import bodyParser from 'body-parser';
+import PostgresDB from './services/postgres';
 import config from './config/main';
 import router from './router/index';
 import checkSuperUser from './initAppRun';
 
-// If we can't connect to the database we can't send any data back
-// from requests so we only run the app when mongoose connects.
-
-// Use native promises
-mongoose.Promise = global.Promise;
-mongoose.connect(config.database).then(
-  async () => {
-    // FIXME: Use Winston logging for messages like these.
-    console.log('Connected to MongoDB');
-    await checkSuperUser();
-
-    // Start the server
+try {
+  (async () => {
     const app = express();
-    app.listen(config.port);
-    // FIXME: use winston
-    console.log('Server is running on port: ', config.port);
 
     app.use(log('dev')); // Using morgan for logging express requests
     app.use(bodyParser.urlencoded({ extended: false })); // Parses urlencoded bodies
@@ -48,10 +33,26 @@ mongoose.connect(config.database).then(
       }
     });
 
+    const db = PostgresDB();
+    await checkSuperUser(db);
+    const dbMiddleWare = (req, res, next) => {
+      req.db = db;
+      next();
+    };
+
+    app.use(dbMiddleWare);
+
+    app.listen(config.port, () => {
+      console.log('Server is running on port: ', config.port);
+    });
+
     router(app);
-  },
-  (reason) => {
-    // FIXME: Winston logger
-    console.log('There was an error connection to MongoDB: ', reason);
-  },
-);
+  })();
+} catch (error) {
+  console.log(error);
+  process.exit();
+}
+
+process.on('SIGINT', () => {
+  process.exit();
+});

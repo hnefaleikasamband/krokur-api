@@ -1,164 +1,139 @@
-/**
- * Routings for athlete
- * TODO:
- *  Add get:id to get a detailed view of single athlete
- *  Add put route for editing
- *  Add delete route (perma-delete or flag?)
- * @version 2018.03.28
- */
-
 import Router from 'express';
 import kennitala from 'kennitala';
-import Athlete from '../models/athlete';
-import Bout from '../models/bout';
+import Joi from 'joi';
+import schema from '../db/schemas';
+import { athletesQueries, achievementsQueries, boutsQueries } from '../db/index';
+import utils from '../services/utils';
+
 // To be able to run async/await
 import '@babel/polyfill';
 
 const athleteRouter = new Router();
 
-/**
- * Get's all Athletse and sends them back as a JSON array
- * GET  /api/v1/athletes
- */
-athleteRouter.get('/', (req, res, next) => {
-  Athlete.find({}, (err, athletes) => {
-    if (err) {
-      res.status(500).json({ message: 'Database Error' });
-    }
-    res.json({ athletes });
-  });
-});
-
-/**
- *
- */
-athleteRouter.get('/:_id', async (req, res) => {
-  try {
-    const athlete = await Athlete.findById({ _id: req.params._id });
-    if (!athlete) {
-      return res.status(404).json();
-    }
-    res.json({ athlete });
-  } catch (error) {
-    console.log('Error in GET /api/v1/athlete/_id:', error);
-    res.status(500).json({ message: 'Error fetching athelte, check logs for details' });
-  }
-});
-
-/**
- * Creates a new athlete and saves it in mongo
- * POST /api/v1/athletes
- */
-athleteRouter.post('/', async (req, res, next) => {
-  // TODO: Validate input
-  const name = req.body.name;
-  const ssn = kennitala.clean(req.body.ssn);
-  const club = req.body.club;
-  const tmpAchievements = req.body.achievements;
-
-  try {
-    const existingUser = await Athlete.findOne({ ssn });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Athlete already exists' });
-    }
-
-    const athlete = new Athlete({
-      name,
-      ssn,
-      club,
-      achievements: tmpAchievements,
-    });
-
-    const validateResponse = await athlete.validate();
-    console.log('validator response: ', validateResponse);
-    await athlete.save();
-    // return res.status(201).json({ athlete });
-    return res.status(200).redirect(`/api/v1/athletes/${athlete._id}`);
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
-    }
-    // FIXME: This needs to be logged properly!!
-    return res.status(500).json({ message: 'Error saving athlete, check logs for details' });
-  }
-});
-
-/**
- * Updates a single athlete based on the ID given
- * PUT /api/v1/athlete/
- */
-athleteRouter.put('/:_id', async (req, res) => {
-  try {
-    console.log('The id given:', req.params._id);
-    const athlete = await Athlete.findById({ _id: req.params._id });
-    console.log('printing athlete:', athlete);
-    if (!athlete) {
-      return res.status(404).json();
-    }
-    const name = req.body.name ? req.body.name : athlete.name;
-    const ssn = req.body.ssn ? kennitala.clean(req.body.ssn) : athlete.ssn;
-    const club = req.body.club ? req.body.club : athlete.club;
-
-    Object.assign(athlete, { name }, { ssn }, { club });
-    await athlete.validate();
-    await athlete.save();
-    // We need to issue a 303 redirect to allow the browser to accept PUT -> GET conversion.
-    return res.status(200).redirect(303, `/api/v1/athletes/${req.params._id}`);
-  } catch (error) {
-    console.log('Error in PUT /athletes/:_id :', error);
-    if (error.name === 'ValidationError') {
-      return res.status(400).json(error.message);
-    }
-    return res.status(500).json({ message: 'Error updating athlete, check logs for details' });
-  }
-});
-
-/**
- * Fetches all bouts for athlete with _id
- * GET /api/v1/athlete/_id/bouts
- */
-athleteRouter.get('/:_id/bouts', (req, res, next) => {
-  Bout.find({ athlete: req.params._id })
-    .populate({ path: 'opponent', select: 'name club' })
-    .exec((err, bouts) => {
-      if (err) {
-        res.status(500).json({ message: 'Database Error' });
+athleteRouter.get(
+  '/:id?',
+  utils.dreamCatcher(async (req, res) => {
+    if (req.params.id) {
+      const athlete = await athletesQueries.findAthleteById(req.db, req.params.id);
+      if (!athlete.length > 0) {
+        return res.status(400).json({ error: 'Athlete not found' });
       }
-      res.json({ bouts });
-    });
-});
-
-/**
- * Creates a new bout and saves it in mongo
- * POST /api/v1/athlete/:_id/bouts
- */
-athleteRouter.post('/:_id/bouts', async (req, res, next) => {
-  const bout = new Bout({
-    athlete: req.params._id,
-    opponent: req.body.opponent,
-    club: req.body.club,
-    type: typeof req.body.type === 'string' ? req.body.type.toUpperCase() : '',
-    date: req.body.date,
-    points: req.body.points,
-    eventOrganizer: req.body.eventOrganizer,
-  });
-
-  try {
-    await bout.validate();
-    await bout.save();
-    const newBout = await Bout.findOne({ _id: bout._id }).populate({
-      path: 'opponent',
-      select: 'name',
-    });
-    return res.status(201).json({ bout: newBout });
-  } catch (error) {
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ message: error.message });
+      return res.json(athlete);
     }
-    // FIXME: This needs to be logged properly!!
-    console.log('POST /athlete/id/bouts - Error saving bout ->', error);
-    return res.status(500).json({ message: 'Error saving bout, check logs for details' });
-  }
-});
+
+    const athletes = await athletesQueries.getAllAthletes(req.db);
+    return res.json({ athletes });
+  }),
+);
+
+athleteRouter.post(
+  '/',
+  utils.dreamCatcher(async (req, res) => {
+    const athlete = req.body;
+    athlete.ssn = kennitala.clean(athlete.ssn);
+    if (!kennitala.isValid(athlete.ssn)) {
+      return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
+    }
+
+    const validatedAthlete = await Joi.validate(
+      athlete,
+      schema.athleteSchema,
+      schema.defaultValidationOptions,
+    );
+
+    if (await athletesQueries.athleteExists(req.db, athlete.ssn)) {
+      return res.status(400).json({ error: 'Athlete already exists.' });
+    }
+
+    const newAthlete = await athletesQueries.addAthlete(req.db, validatedAthlete);
+    try {
+      await achievementsQueries.startAchievements(req.db, newAthlete.id);
+      return res.redirect(303, `/api/v1/athletes/${newAthlete.id}`);
+    } catch (error) {
+      console.log(error);
+      await athletesQueries.removeAthlete(req.db, newAthlete.id);
+      return res
+        .status(500)
+        .json({ error: 'Something went wrong, reverting previous steps, check logs for details.' });
+    }
+  }),
+);
+
+athleteRouter.put(
+  '/:id',
+  utils.dreamCatcher(async (req, res) => {
+    const athlete = req.body;
+    athlete.ssn = kennitala.clean(athlete.ssn);
+
+    if (!kennitala.isValid(athlete.ssn)) {
+      return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
+    }
+
+    const validatedAthlete = await Joi.validate(
+      athlete,
+      schema.athleteSchema,
+      schema.defaultValidationOptions,
+    );
+
+    const oldAthlete = await athletesQueries.getAthleteCleanBasicInfoById(req.db, req.params.id);
+    if (!oldAthlete.length > 0) {
+      return res.status(404).json({ error: 'Athletes does not exists.' });
+    }
+
+    const newAthleteInfo = { ...oldAthlete[0], ...validatedAthlete };
+    const savedAthlete = await athletesQueries.updateAthlete(req.db, newAthleteInfo);
+    return res.redirect(303, `/api/v1/athletes/${savedAthlete.id}`);
+  }),
+);
+
+athleteRouter.get(
+  '/:athleteId/bouts',
+  utils.dreamCatcher(async (req, res) => {
+    const { athleteId } = req.params;
+    const bouts = await boutsQueries.getAllBoutsForAthlete(req.db, athleteId);
+    return res.json({ bouts });
+  }),
+);
+
+athleteRouter.post(
+  '/:athleteId/bouts',
+  utils.dreamCatcher(async (req, res) => {
+    const bout = req.body;
+    const { athleteId } = req.params;
+
+    if (
+      !bout.athleteId
+      || bout.athleteId !== athleteId
+      || !bout.athleteName
+      || !bout.athleteClubShortHand
+    ) {
+      const athlete = await athletesQueries.findAthleteById(req.db, athleteId);
+      bout.athleteId = athleteId;
+      bout.athleteName = athlete.name;
+      bout.athleteClubShortHand = athlete.clubShorthand;
+    }
+    const validBout = await Joi.validate(bout, schema.boutSchema, schema.defaultValidationOptions);
+
+    const currentAchievements = await achievementsQueries.getAchievementStatus(req.db, athleteId);
+    const newBout = await boutsQueries.addBout(req.db, validBout);
+    try {
+      const achievementScore = utils.achievementCheck(
+        currentAchievements[0],
+        bout.points,
+        bout.boutDate,
+      );
+      if (achievementScore.needsToUpdate) {
+        await achievementScore.updateAchievement(req.db, athleteId);
+      }
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ error: 'Could not save bout, error updating achievement history.' });
+    }
+
+    return res.status(201).json(newBout);
+  }),
+);
 
 export default athleteRouter;

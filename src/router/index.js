@@ -1,14 +1,8 @@
-/**
- * This is the main routing file, declaring all top
- * level routes as well as authentication.
- * @version 2018.03.25
- */
 import Router from 'express';
 import passport from 'passport';
 import '../config/passport';
 import AuthAccess from './authentication';
 import athletes from './athletes';
-import bouts from './bouts';
 import club from './clubs';
 
 // Middleware for login and auth
@@ -28,7 +22,6 @@ export default function (app) {
   const authRoutes = new Router();
 
   apiRoutes.use('/athletes', requireAuth, athletes);
-  apiRoutes.use('/bouts', requireAuth, bouts);
   apiRoutes.use('/clubs', requireAuth, club);
   apiRoutes.get('/users', requireAuth, AuthAccess.getUsers);
   apiRoutes.post('/users', requireAuth, AuthAccess.register);
@@ -43,7 +36,7 @@ export default function (app) {
   });
 
   app.use('/api/v1', apiRoutes);
-  app.get('/api/health-check', (req, res) => res.json({ message: "I'm running" }));
+  app.get('/api/health-check', (req, res) => res.json({ message: "I'm healthy" }));
 
   // app.use('/', authRoutes);
 }
