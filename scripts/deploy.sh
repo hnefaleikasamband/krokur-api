@@ -2,7 +2,8 @@
 BRANCH=$1
 STAGING="staging"
 PRODUCTION="prod"
-if [ $BRANCH != $STAGING ] && [$BRANCH != $PRODUCTION]; then
+if [ "$BRANCH" != "$STAGING" ] && [ "$BRANCH" != "$PRODUCTION" ]; then
+  echo "you must pass in either \"staging\" or \"prod\""
   exit 1
 fi
 
