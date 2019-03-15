@@ -1,3 +1,5 @@
+// To be able to run async/await
+import '@babel/polyfill';
 import express from 'express';
 import log from 'morgan';
 import bodyParser from 'body-parser';

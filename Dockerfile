@@ -9,7 +9,6 @@ RUN npm run build
 
 # Second stage
 FROM keymetrics/pm2:10-alpine
-EXPOSE 80
 
 RUN mkdir -p /usr/local/share/app
 WORKDIR /usr/local/share/app
