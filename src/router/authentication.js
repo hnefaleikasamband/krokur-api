@@ -36,10 +36,10 @@ exports.login = function login(req, res) {
 };
 
 exports.authedUser = function authedUser(req, res) {
-  const userInfo = setUserInfo(req.user);
   if (!req.user || req.user === undefined) {
     return res.status(404).send();
   }
+  const userInfo = setUserInfo(req.user);
   return res.json(userInfo);
 };
 
