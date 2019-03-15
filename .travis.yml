@@ -5,7 +5,7 @@ services:
 
 script:
   - npm run build
-  #- docker build -t krokur-api .
+  - docker build -t krokur-api .
 
 env:
   global:
@@ -17,7 +17,6 @@ env:
 branches:
   only:
     - master
-    - db-migration-switch
 
 deploy:
   - provider: script
@@ -30,4 +29,4 @@ deploy:
     skip_cleanup: true
     script: bash scripts/deploy.sh staging
     on:
-      branch: db-migration-switch
+      branch: master
