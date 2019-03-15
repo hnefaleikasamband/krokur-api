@@ -21,12 +21,12 @@ branches:
 deploy:
   - provider: script
     skip_cleanup: true
-    script: "./scripts/deploy.sh prod"
+    script: scripts/deploy.sh prod
     on:
       branch: master
       tags: true
   - provider: script
     skip_cleanup: true
-    script: "./scripts/deploy.sh staging"
+    script: scripts/deploy.sh staging
     on:
       branch: master
