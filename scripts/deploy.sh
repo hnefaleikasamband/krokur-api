@@ -8,5 +8,5 @@ if [ "$BRANCH" != "$STAGING" ] && [ "$BRANCH" != "$PRODUCTION" ]; then
 fi
 
 git config user.email "${EMAIL}"
-git config user.name "${USER}"
-git push https://{$USER}:${TOKEN}@{$GH_REPO} $BRANCH > /dev/null 2>&1
+git config user.name "${GH_USER}"
+git push https://{$GH_USER}:${TOKEN}@{$GH_REPO} $BRANCH > /dev/null 2>&1
