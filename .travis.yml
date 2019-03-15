@@ -9,7 +9,7 @@ script:
 
 env:
   global:
-    - EMAIL="travis@travis.com"
+    - EMAIL="48571359+krokurbot@users.noreply.github.com"
     - GH_USER="krokurbot"
     - GH_REPO="github.com/hnefaleikasamband/krokur-api.git"
     - secure: QoJhCD+8vbUJ1taIRveglRr0y0rvqkN+UC60EG9fsQG9r/vUfacWNmmhHICHWO5pM6EePSKMz7EclNzLejlf86G7GYmAqJCLnF68n98xlcrp29MIUkAvTxu87eMrduqFoigckXm7FtJ5rHMe5RiLS5LXY/QOtRizG1ubBeYrc6gpiBG83xM1Fc18FpzHPE9EMuqKXQavQ6tTA2EYpXfB/WC60JxAbvahJcgCgThb5plvP+o5PF/+e7pTwoypbxNELv+cGgAzGiwaVxvuPw6eTPUDu7zN+qS3pbYN+M43QiwO8GPoqUPmHmeOHLYPshoIvyGFmiQixStTFU0DRWSXy0kyakDfSiKKpvoXuPBGbHnXb+A3UX+mniVdIXoTY+lCdIX8OtISj0lXO7xqyaNgEwrTud9OQBe+hR2MIl2NPH7nlGQkY3onFJmuks12AHqqrTZ0uAWw6gKpxu5+u7/YiN/G1MadV/Az4kelXqujndVO/Z/6DapdeMTNwcvLKBsHkbt4GAGH286waSDJA73ip3rBoz4n2wEi+R1T5zCDvD4oElvDwHH9+r7tL3dDret8IG4yjQhGECTSrDAt/ju4PF/2PgQtusY6bmKaYBup/M5vuJS1G2L+cihW0A491m1yYLmq8CluTY6cJyjdW7YKsVfHjwRKoAAiGXzfADAWMiA=
