@@ -11,7 +11,7 @@
     "clean": "rm -rf dist",
     "lint": "eslint src/ --quiet",
     "validate": "npm run lint; npm run test && npm outdated --depth 0",
-    "docker": "mkdir -p ./db; npm run build; docker-compose up --build"
+    "docker": "mkdir -p ./local-db; npm run build; docker-compose up --build"
   },
   "repository": {
     "type": "git",
