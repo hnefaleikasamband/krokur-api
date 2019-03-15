@@ -7,6 +7,12 @@ if [ "$BRANCH" != "$STAGING" ] && [ "$BRANCH" != "$PRODUCTION" ]; then
   exit 1
 fi
 
+<<<<<<< HEAD
 git config user.email "$EMAIL"
 git config user.name "$GH_USER"
 git push https://$GH_USER:$TOKEN@$GH_REPO HEAD:$BRANCH
+=======
+git config user.email "${EMAIL}"
+git config user.name "${GH_USER}"
+git push https://{$GH_USER}:${TOKEN}@{$GH_REPO} $BRANCH
+>>>>>>> babbara
