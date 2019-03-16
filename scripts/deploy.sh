@@ -9,5 +9,4 @@ fi
 
 git config user.email "$EMAIL"
 git config user.name "$GH_USER"
-git status
 git push https://$GH_USER:$TOKEN@$GH_REPO HEAD:$BRANCH
