@@ -1,4 +1,4 @@
-FROM keymetrics/pm2:10-alpine as base
+FROM node:10-alpine as base
 
 RUN mkdir -p /usr/local/share/app
 WORKDIR /usr/local/share/app
@@ -7,7 +7,7 @@ RUN npm install
 RUN npm run build
 
 # Second stage
-FROM keymetrics/pm2:10-alpine
+FROM node:10-alpine
 
 RUN mkdir -p /usr/local/share/app
 WORKDIR /usr/local/share/app
