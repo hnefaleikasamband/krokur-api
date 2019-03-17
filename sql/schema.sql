@@ -1,7 +1,7 @@
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
-CREATE TABLE public.clubs (
+CREATE TABLE IF NOT EXISTS public.clubs (
 	id uuid default uuid_generate_v4() not null 
     constraint club_pkey 
       primary key,
@@ -11,7 +11,7 @@ CREATE TABLE public.clubs (
   updated_at timestamp not null default now()
 );
 
-CREATE TABLE public.users (
+CREATE TABLE IF NOT EXISTS public.users (
 	id uuid default uuid_generate_v4() not null
 		constraint users_pkey
 			primary key,
@@ -26,7 +26,7 @@ CREATE TABLE public.users (
 );
 
 
-CREATE TABLE public.athletes (
+CREATE TABLE IF NOT EXISTS public.athletes (
 	id uuid default uuid_generate_v4() not null
 		constraint athletes_pkey
 			primary key,
@@ -37,7 +37,7 @@ CREATE TABLE public.athletes (
   updated_at timestamp not null default now()
 );
 
-CREATE TABLE public.achievements (
+CREATE TABLE IF NOT EXISTS public.achievements (
 	athlete_id uuid not null
 		constraint achievements_pkey
 			primary key
@@ -54,7 +54,7 @@ CREATE TABLE public.achievements (
   updated_at timestamp not null default now()
 );
 
-CREATE TABLE public.bouts (
+CREATE TABLE IF NOT EXISTS public.bouts (
 	id uuid default uuid_generate_v4() not null
 		constraint bouts_pkey
 			primary key,
