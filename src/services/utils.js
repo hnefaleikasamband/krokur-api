@@ -67,8 +67,28 @@ const achievementCheck = (achievements, points, date) => {
   return response;
 };
 
+const snakeToCamelCase = snek => snek.replace(/(_\w)/g, big => big[1].toUpperCase());
+
+const mapDbObjectToResponse = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map(v => mapDbObjectToResponse(v));
+  }
+  if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce(
+      (result, key) => ({
+        ...result,
+        [snakeToCamelCase(key)]: mapDbObjectToResponse(obj[key]),
+      }),
+      {},
+    );
+  }
+  return obj;
+};
+
 export default {
   hashPassword,
   dreamCatcher,
   achievementCheck,
+  snakeToCamelCase,
+  mapDbObjectToResponse,
 };
