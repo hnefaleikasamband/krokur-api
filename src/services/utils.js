@@ -22,14 +22,14 @@ const dreamCatcher = route => async (req, res) => {
 
 const calculateAchievement = (boutsLeft, date) => (boutsLeft <= 0 ? { date, boutsLeft } : { date: null, boutsLeft: parseInt(boutsLeft, 10) - 1 });
 
-const achievementCheck = (achievements, points, date) => {
+const achievementCheck = (data) => {
   const response = { needsToUpdate: true, updateAchievement: null, achievementName: '' };
 
-  if (points < 27) {
+  if (data.points < 27) {
     return { ...response, needsToUpdate: false };
   }
   const {
-    athlete_id: athleteId,
+    athleteId,
     diploma_date: diplomaDate,
     diploma_bouts_left: diplomaBoutsLeft,
     bronz_date: bronzDate,
@@ -38,7 +38,9 @@ const achievementCheck = (achievements, points, date) => {
     silver_bouts_left: silverBoutsLeft,
     gold_date: goldDate,
     gold_bouts_left: goldBoutsLeft,
-  } = achievements;
+    points,
+    date,
+  } = data;
   let updateAchievement;
   if (!diplomaDate) {
     updateAchievement = calculateAchievement(diplomaBoutsLeft, date);
@@ -60,15 +62,35 @@ const achievementCheck = (achievements, points, date) => {
     response.needsToUpdate = false;
   }
   console.log(
-    ` <Achievement-Process> ... Athlete: ${athleteId} update: ${updateAchievement} for achievement: ${
-      response.achievementName
-    }`,
+    ` <Achievement-Process> ... Athlete: ${athleteId} update: ${JSON.stringify(
+      updateAchievement,
+    )} for achievement: ${response.achievementName}`,
   );
   return response;
+};
+
+const snakeToCamelCase = snek => snek.replace(/(_\w)/g, big => big[1].toUpperCase());
+
+const mapDbObjectToResponse = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map(v => mapDbObjectToResponse(v));
+  }
+  if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce(
+      (result, key) => ({
+        ...result,
+        [snakeToCamelCase(key)]: mapDbObjectToResponse(obj[key]),
+      }),
+      {},
+    );
+  }
+  return obj;
 };
 
 export default {
   hashPassword,
   dreamCatcher,
   achievementCheck,
+  snakeToCamelCase,
+  mapDbObjectToResponse,
 };

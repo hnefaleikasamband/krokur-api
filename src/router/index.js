@@ -19,17 +19,14 @@ const REQUIRE = {
 
 export default function (app) {
   const apiRoutes = new Router();
-  const authRoutes = new Router();
 
-  apiRoutes.use('/athletes', requireAuth, athletes);
-  apiRoutes.use('/clubs', requireAuth, club);
+  apiRoutes.post('/auth/register', requireAuth, AuthAccess.register);
+  apiRoutes.post('/auth/login', requireLogin, AuthAccess.login);
+  apiRoutes.get('/auth/user', requireAuth, AuthAccess.authedUser);
   apiRoutes.get('/users', requireAuth, AuthAccess.getUsers);
   apiRoutes.post('/users', requireAuth, AuthAccess.register);
-  apiRoutes.use('/auth', authRoutes);
-
-  authRoutes.post('/register', requireAuth, AuthAccess.register);
-  authRoutes.post('/login', requireLogin, AuthAccess.login);
-  authRoutes.get('/user', requireAuth, AuthAccess.authedUser);
+  apiRoutes.use('/athletes', requireAuth, athletes);
+  apiRoutes.use('/clubs', requireAuth, club);
 
   apiRoutes.get('/', requireAuth, (req, res) => {
     res.json({ success: true });
@@ -37,6 +34,4 @@ export default function (app) {
 
   app.use('/api/v1', apiRoutes);
   app.get('/api/health-check', (req, res) => res.json({ message: "I'm healthy" }));
-
-  // app.use('/', authRoutes);
 }

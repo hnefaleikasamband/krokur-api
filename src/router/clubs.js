@@ -10,14 +10,16 @@ clubRouter.get(
   '/:shorthand?',
   utils.dreamCatcher(async (req, res) => {
     if (req.params.shorthand) {
-      const club = await clubsQueries.findClubByShorthand(req.db, req.params.shorthand);
+      const club = utils.mapDbObjectToResponse(
+        await clubsQueries.findClubByShorthand(req.db, req.params.shorthand.toUpperCase()),
+      );
       if (!club.length > 0) {
         return res.status(404).json({ error: `Could not find club "${req.params.shorthand}"` });
       }
       return res.json(club);
     }
 
-    const clubs = await clubsQueries.getAllClubs(req.db);
+    const clubs = utils.mapDbObjectToResponse(await clubsQueries.getAllClubs(req.db));
     return res.json({ clubs });
   }),
 );
@@ -36,7 +38,7 @@ clubRouter.post(
     }
 
     const club = await clubsQueries.addClub(req.db, validatedClub);
-    return res.status(201).json(club);
+    return res.redirect(303, `/api/v1/clubs/${club.id}`);
   }),
 );
 
@@ -54,12 +56,12 @@ clubRouter.put(
     );
 
     const exists = await clubsQueries.findClubById(req.db, validatedClub.id);
-    if (!exists.length > 0) {
+    if (exists.length <= 0) {
       return res.status(404).json({ error: 'Club does not exists' });
     }
 
     const updatedClub = await clubsQueries.updateClub(req.db, validatedClub);
-    return res.json(updatedClub);
+    return res.redirect(303, `/api/v1/clubs/${updatedClub.shorthand}`);
   }),
 );
 

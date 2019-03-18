@@ -18,10 +18,10 @@ athleteRouter.get(
       if (!athlete.length > 0) {
         return res.status(400).json({ error: 'Athlete not found' });
       }
-      return res.json(athlete);
+      return res.json({ athlete: utils.mapDbObjectToResponse(athlete[0]) });
     }
 
-    const athletes = await athletesQueries.getAllAthletes(req.db);
+    const athletes = utils.mapDbObjectToResponse(await athletesQueries.getAllAthletes(req.db));
     return res.json({ athletes });
   }),
 );
@@ -90,7 +90,9 @@ athleteRouter.get(
   '/:athleteId/bouts',
   utils.dreamCatcher(async (req, res) => {
     const { athleteId } = req.params;
-    const bouts = await boutsQueries.getAllBoutsForAthlete(req.db, athleteId);
+    const bouts = utils.mapDbObjectToResponse(
+      await boutsQueries.getAllBoutsForAthlete(req.db, athleteId),
+    );
     return res.json({ bouts });
   }),
 );
@@ -107,32 +109,33 @@ athleteRouter.post(
       || !bout.athleteName
       || !bout.athleteClubShortHand
     ) {
-      const athlete = await athletesQueries.findAthleteById(req.db, athleteId);
+      const athlete = (await athletesQueries.findAthleteById(req.db, athleteId))[0];
       bout.athleteId = athleteId;
       bout.athleteName = athlete.name;
-      bout.athleteClubShortHand = athlete.clubShorthand;
+      bout.athleteClubShortHand = athlete.club_shorthand;
     }
     const validBout = await Joi.validate(bout, schema.boutSchema, schema.defaultValidationOptions);
 
     const currentAchievements = await achievementsQueries.getAchievementStatus(req.db, athleteId);
     const newBout = await boutsQueries.addBout(req.db, validBout);
     try {
-      const achievementScore = utils.achievementCheck(
-        currentAchievements[0],
-        bout.points,
-        bout.boutDate,
-      );
+      const achievementScore = utils.achievementCheck({
+        athleteId,
+        ...currentAchievements[0],
+        points: bout.points,
+        date: bout.boutDate,
+      });
       if (achievementScore.needsToUpdate) {
         await achievementScore.updateAchievement(req.db, athleteId);
       }
     } catch (error) {
-      console.log(error);
+      console.log('<> ERROR, COULD NOT UPDATE ACHIEVEMENT BECAUSE:', error);
       return res
         .status(500)
         .json({ error: 'Could not save bout, error updating achievement history.' });
     }
 
-    return res.status(201).json(newBout);
+    return res.status(201).json(utils.mapDbObjectToResponse(newBout));
   }),
 );
 
