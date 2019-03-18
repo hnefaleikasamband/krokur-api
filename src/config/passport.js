@@ -11,7 +11,8 @@ const localLogin = new LocalStrategy(
   async (req, email, password, done) => {
     try {
       const userData = await usersQueries.findUserByEmail(req.db, email);
-      if (userData.length > 0 && bcrypt.compare(password, userData[0].password)) {
+
+      if (userData.length > 0 && (await bcrypt.compare(password, userData[0].password))) {
         return done(null, userData[0]);
       }
 
