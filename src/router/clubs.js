@@ -38,7 +38,7 @@ clubRouter.post(
     }
 
     const club = await clubsQueries.addClub(req.db, validatedClub);
-    return res.redirect(303, `/api/v1/clubs/${club.id}`);
+    return res.redirect(303, `/api/v1/clubs/${club.shorthand}`);
   }),
 );
 
