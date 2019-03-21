@@ -11,8 +11,9 @@ import checkSuperUser from './initAppRun';
 try {
   (async () => {
     const app = express();
-
-    app.use(log('dev')); // Using morgan for logging express requests
+    app.set('trust proxy', true);
+    const logLevel = process.env.LOGGING.toLocaleLowerCase() === 'production' ? 'combined' : 'dev';
+    app.use(log(logLevel)); // Using morgan for logging express requests
     app.use(bodyParser.urlencoded({ extended: false })); // Parses urlencoded bodies
     app.use(bodyParser.json()); // Send JSON responses
 
