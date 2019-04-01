@@ -19,25 +19,22 @@ function setUserInfo(request) {
     name: request.name,
     email: request.email,
     role: request.role,
+    club: request.club,
   };
 }
 
 exports.login = function login(req, res) {
   const userInfo = setUserInfo(req.user);
   res.status(200).json({
-    token: `JWT ${generateToken(userInfo)}`,
-    // TODO: Revisit this and decide if we want to decode JWT in frontend or send like this.
-    user: {
-      name: userInfo.name,
-      email: userInfo.email,
-    },
+    token: `${generateToken(userInfo)}`,
+    user: userInfo,
     expiresIn: 10800,
   });
 };
 
 exports.authedUser = function authedUser(req, res) {
   if (!req.user || req.user === undefined) {
-    return res.status(404).send();
+    return res.status(401).send();
   }
   const userInfo = setUserInfo(req.user);
   return res.json(userInfo);
