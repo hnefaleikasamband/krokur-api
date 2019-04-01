@@ -27,7 +27,7 @@ exports.login = function login(req, res) {
   const userInfo = setUserInfo(req.user);
   res.status(200).json({
     token: `${generateToken(userInfo)}`,
-    user: userInfo,
+    userInfo,
     expiresIn: 10800,
   });
 };
