@@ -12,7 +12,7 @@ try {
   (async () => {
     const app = express();
     app.set('trust proxy', true);
-    const logLevel = process.env.LOGGING.toLocaleLowerCase() === 'production' ? 'combined' : 'dev';
+    const logLevel = process.env.LOGGING === 'production' ? 'combined' : 'dev';
     app.use(log(logLevel)); // Using morgan for logging express requests
     app.use(bodyParser.urlencoded({ extended: false })); // Parses urlencoded bodies
     app.use(bodyParser.json()); // Send JSON responses
