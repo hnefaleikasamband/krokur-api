@@ -16,24 +16,22 @@ function generateToken(user) {
 async function setUserInfo(db, user) {
   let club;
   try {
-    club = user.club ? (await clubsQueries.findClubById(db, user.club))[0] : { shorthand: null };
+    club = user.club ? (await clubsQueries.findClubById(db, user.club))[0] : null;
   } catch (error) {
-    console.log("Wasn't able to find a club in setUserInfo:", error);
-    club.shorthand = null;
+    console.log('<> Error fetching club in setUserInfo:', error);
+    club = null;
   }
-  console.log('club:', club);
   return {
     id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
-    club: club.shorthand,
+    club,
   };
 }
 
 exports.login = async function login(req, res) {
   const userInfo = await setUserInfo(req.db, req.user);
-  console.log(userInfo);
   res.status(200).json({
     token: `${generateToken(userInfo)}`,
     userInfo,
