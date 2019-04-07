@@ -13,7 +13,6 @@ const athleteRouter = new Router();
 athleteRouter.get(
   '/manage-view',
   utils.dreamCatcher(async (req, res) => {
-    console.log(req);
     const { user } = req;
     if (user.role !== 'ADMIN' && (user.role === 'COACH' && !user.club)) {
       return res.status(401).json('Unauthorized');
