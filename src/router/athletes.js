@@ -11,6 +11,24 @@ import '@babel/polyfill';
 const athleteRouter = new Router();
 
 athleteRouter.get(
+  '/club-view',
+  utils.dreamCatcher(async (req, res) => {
+    console.log(req);
+    const { user } = req;
+    if (user.role !== 'ADMIN' && (user.role === 'COACH' && !user.club)) {
+      return res.status(401).json('Unauthorized');
+    }
+
+    const athletes = user.role === 'ADMIN'
+      ? utils.mapDbObjectToResponse(await athletesQueries.getDetailedAllAthletes(req.db))
+      : utils.mapDbObjectToResponse(
+        await athletesQueries.getDetailedAllAthletesByClub(req.db, user.club.toUpperCase()),
+      );
+    return res.json({ athletes });
+  }),
+);
+
+athleteRouter.get(
   '/:id?',
   utils.dreamCatcher(async (req, res) => {
     if (req.params.id) {
