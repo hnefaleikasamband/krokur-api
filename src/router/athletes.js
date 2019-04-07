@@ -11,7 +11,7 @@ import '@babel/polyfill';
 const athleteRouter = new Router();
 
 athleteRouter.get(
-  '/club-view',
+  '/manage-view',
   utils.dreamCatcher(async (req, res) => {
     console.log(req);
     const { user } = req;
