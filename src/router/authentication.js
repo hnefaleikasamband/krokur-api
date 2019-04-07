@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import Joi from 'joi';
 import config from '../config/main';
-import { usersQueries } from '../db/index';
+import { usersQueries, clubsQueries } from '../db/index';
 import schema from '../db/schemas';
 import utils from '../services/utils';
 // To be able to run async/await
@@ -13,18 +13,25 @@ function generateToken(user) {
   // return jwt.sign(user, config.secret, { expiresIn: '2m' });
 }
 
-function setUserInfo(request) {
+async function setUserInfo(db, user) {
+  let club;
+  try {
+    club = user.club ? (await clubsQueries.findClubById(db, user.club))[0] : null;
+  } catch (error) {
+    console.log('<> Error fetching club in setUserInfo:', error);
+    club = null;
+  }
   return {
-    id: request.id,
-    name: request.name,
-    email: request.email,
-    role: request.role,
-    club: request.club,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    club,
   };
 }
 
-exports.login = function login(req, res) {
-  const userInfo = setUserInfo(req.user);
+exports.login = async function login(req, res) {
+  const userInfo = await setUserInfo(req.db, req.user);
   res.status(200).json({
     token: `${generateToken(userInfo)}`,
     userInfo,
@@ -32,11 +39,11 @@ exports.login = function login(req, res) {
   });
 };
 
-exports.authedUser = function authedUser(req, res) {
+exports.authedUser = async function authedUser(req, res) {
   if (!req.user || req.user === undefined) {
     return res.status(401).send();
   }
-  const userInfo = setUserInfo(req.user);
+  const userInfo = await setUserInfo(req.db, req.user);
   return res.json(userInfo);
 };
 
@@ -59,7 +66,7 @@ exports.register = async function register(req, res) {
     validatedUser.club = validatedUser.club;
 
     const newUser = await usersQueries.addUser(req.db, validatedUser);
-    const userInfo = setUserInfo(newUser);
+    const userInfo = await setUserInfo(req.db, newUser);
     return res.status(201).json({
       token: `JWT ${generateToken(userInfo)}`,
       user: userInfo,
