@@ -4,7 +4,7 @@ import config from '../config/main';
 const pgp = pgPromise();
 
 const db = (connString = config.database) => {
-  const database = pgp(connString);
+  const database = pgp(connString, { ssl: true });
   // Test if db connection works
   database
     .connect()
