@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS public.bouts (
   opponent_id uuid not null,
   opponent_name varchar(255) not null,
   opponent_club_shorthand varchar(10),
-  type varchar(2) not null,
+  class varchar(2) not null,
   bout_date date not null,
   points numeric(3,1) not null,
   organizer varchar(255) not null,

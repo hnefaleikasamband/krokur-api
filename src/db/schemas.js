@@ -53,7 +53,7 @@ const boutSchema = Joi.object().keys({
   opponentClubShortHand: Joi.alternatives()
     .try(SHORTHAND, UUIDv4)
     .required(),
-  type: Joi.string()
+  class: Joi.string()
     .uppercase()
     .valid('A', 'B', 'C')
     .required(),
