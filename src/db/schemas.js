@@ -24,7 +24,7 @@ const userSchema = Joi.object().keys({
   disabled: Joi.boolean().default(false),
   role: Joi.string()
     .uppercase()
-    .valid('ADMIN', 'COACH', 'REFEREE')
+    .valid('ADMIN', 'COACH', 'JUDGE')
     .required(),
 });
 
