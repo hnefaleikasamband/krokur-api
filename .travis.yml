@@ -17,14 +17,13 @@ env:
 branches:
   only:
     - master
-    - db-migration-switch
+    - /^v\d+.\d+(.\d+)?(-\S*)?$/
 
 deploy:
   - provider: script
     skip_cleanup: true
     script: bash scripts/deploy.sh prod
     on:
-      branch: master
       tags: true
   - provider: script
     skip_cleanup: true
