@@ -1,6 +1,6 @@
 {
   "name": "krokur-api",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "API for managing youth points for diploma boxing.",
   "private": true,
   "scripts": {
