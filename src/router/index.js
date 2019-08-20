@@ -4,27 +4,33 @@ import '../config/passport';
 import AuthAccess from './authentication';
 import athletes from './athletes';
 import club from './clubs';
+import utils from '../services/utils';
 
 // Middleware for login and auth
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireLogin = passport.authenticate('local', { session: false });
 
-// Access constants
-const REQUIRE = {
-  READ: 'read',
-  WRITE: 'write',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-};
-
 export default function (app) {
   const apiRoutes = new Router();
 
-  apiRoutes.post('/auth/register', requireAuth, AuthAccess.register);
+  const { ADMIN, COACH, JUDGE } = utils.ROLES;
+
   apiRoutes.post('/auth/login', requireLogin, AuthAccess.login);
   apiRoutes.get('/auth/user', requireAuth, AuthAccess.authedUser);
-  apiRoutes.get('/users', requireAuth, AuthAccess.getUsers);
-  apiRoutes.post('/users', requireAuth, AuthAccess.register);
+  apiRoutes.post(
+    '/auth/register',
+    requireAuth,
+    AuthAccess.restrictAccess([ADMIN]),
+    AuthAccess.register,
+  );
+  apiRoutes.get('/users', requireAuth, AuthAccess.restrictAccess([ADMIN]), AuthAccess.getUsers);
+  apiRoutes.post('/users', requireAuth, AuthAccess.restrictAccess([ADMIN]), AuthAccess.register);
+  apiRoutes.put(
+    '/users/:id/password',
+    requireAuth,
+    AuthAccess.restrictAccess([ADMIN]),
+    AuthAccess.updatePassword,
+  );
   apiRoutes.use('/athletes', requireAuth, athletes);
   apiRoutes.use('/clubs', requireAuth, club);
 
