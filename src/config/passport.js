@@ -32,10 +32,8 @@ const jwtOptions = {
 
 // JWT authentication
 const jwtLogin = new JwtStrategy(jwtOptions, async (req, payload, done) => {
-  // eslint-disable-next-line
   try {
-    const user = await usersQueries.findUserById(req.db, payload.id);
-    return user ? done(null, user[0]) : done(null, false);
+    return done(null, payload);
   } catch (error) {
     console.log('Error in JWT strategy:', error);
     return done(null, false);
