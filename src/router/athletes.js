@@ -21,7 +21,7 @@ athleteRouter.get(
     const athletes = user.role === 'ADMIN'
       ? utils.mapDbObjectToResponse(await athletesQueries.getDetailedAllAthletes(req.db))
       : utils.mapDbObjectToResponse(
-        await athletesQueries.getDetailedAllAthletesByClub(req.db, user.club.toUpperCase()),
+        await athletesQueries.getDetailedAllAthletesByClub(req.db, user.club.id),
       );
     return res.json({ athletes });
   }),
