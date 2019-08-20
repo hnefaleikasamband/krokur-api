@@ -43,8 +43,8 @@ exports.authedUser = async function authedUser(req, res) {
   if (!req.user || req.user === undefined) {
     return res.status(401).send();
   }
-  const userInfo = await setUserInfo(req.db, req.user);
-  return res.json(userInfo);
+  const { iat, exp, ...user } = req.user;
+  return res.json(user);
 };
 
 exports.register = async function register(req, res) {
