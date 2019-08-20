@@ -7,6 +7,12 @@ const hashPassword = async (password) => {
   return bcrypt.hash(password, salt);
 };
 
+const ROLES = {
+  ADMIN: 'ADMIN',
+  COACH: 'COACH',
+  JUDGE: 'JUDGE',
+};
+
 /** Async/Await error handler for consistent error handling */
 const dreamCatcher = route => async (req, res) => {
   try {
@@ -89,6 +95,7 @@ const mapDbObjectToResponse = (obj) => {
 
 export default {
   hashPassword,
+  ROLES,
   dreamCatcher,
   achievementCheck,
   snakeToCamelCase,

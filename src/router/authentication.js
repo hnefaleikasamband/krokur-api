@@ -85,33 +85,23 @@ exports.register = async function register(req, res) {
 // Authorization Middleware
 // ========================================
 
-const accessAvailable = {
-  read: 0,
-  write: 1,
-  admin: 2,
-  superadmin: 3,
-};
-
 // Role authorization check
-exports.hasAccess = function hasAccess(access) {
-  return (req, res, next) => {
-    const { user } = req;
-
-    // eslint-disable-next-line
-    User.findById(user._id, (err, foundUser) => {
-      if (err) {
-        res.status(422).json({ error: 'No user was found.' });
-        return next(err);
-      }
-
+exports.restrictAccess = function hasAccess(roles) {
+  return async (req, res, next) => {
+    try {
+      const { user } = req;
+      const currentUser = await usersQueries.findUserById(req.db, user.id);
       // If user is found, check role.
-      if (accessAvailable[foundUser.access] >= accessAvailable[access]) {
+      if (roles.includes(currentUser[0].role)) {
         return next();
       }
 
-      res.status(401).json({ error: 'You are not authorized to view this content.' });
+      res.status(401).send('Unauthorized');
       return next('Unauthorized');
-    });
+    } catch (error) {
+      console.error('Access fail:', error);
+      return next('Unauthorized');
+    }
   };
 };
 
@@ -121,7 +111,6 @@ exports.hasAccess = function hasAccess(access) {
 exports.getUsers = async function getUsers(req, res) {
   try {
     // TODO: We will need to clean up this data before sending it (e.g. passwords)
-    // const users = await User.find({});
     const users = await usersQueries.getAllUsers(req.db);
 
     return res.status(201).json({ users });
@@ -131,3 +120,17 @@ exports.getUsers = async function getUsers(req, res) {
     return res.status(500).json({ error: 'Error fetching users from database' });
   }
 };
+
+exports.updatePassword = utils.dreamCatcher(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+  const validObj = await Joi.validate(
+    req.body,
+    schema.passwordValidation,
+    schema.defaultValidationOptions,
+  );
+
+  const hashedPassword = await utils.hashPassword(validObj.password);
+  await usersQueries.udpatePassword(req.db, id, hashedPassword);
+  return res.json({ success: 'Password changed' });
+});

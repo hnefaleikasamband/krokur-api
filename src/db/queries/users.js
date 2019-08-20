@@ -12,9 +12,15 @@ const addUser = async (db, user) => db.one(
   user,
 );
 
+const udpatePassword = async (db, id, password) => db.one('UPDATE users set password = ${password} where id = ${id} returning *', {
+  id,
+  password,
+});
+
 export default {
   findUserByEmail,
   findUserById,
   getAllUsers,
   addUser,
+  udpatePassword,
 };
