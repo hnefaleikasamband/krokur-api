@@ -121,18 +121,16 @@ exports.getUsers = async function getUsers(req, res) {
   }
 };
 
-exports.updatePassword = async function updatePassword(req, res) {
-  try {
-    const { password, confirmPassword } = await req.body;
-    const { id } = req.params;
-    if (password !== confirmPassword) {
-      return res.status(400).json({ error: 'Passwords do not match' });
-    }
-    const hashedPassword = await utils.hashPassword(password);
-    await usersQueries.udpatePassword(req.db, id, hashedPassword);
-    return res.json({ success: 'Password changed' });
-  } catch (error) {
-    console.log('error updating password:', error);
-    return res.status(500).json({ error: 'Error occured, could not update password' });
-  }
-};
+exports.updatePassword = utils.dreamCatcher(async (req, res) => {
+  const { id } = req.params;
+  console.log(req.body);
+  const validObj = await Joi.validate(
+    req.body,
+    schema.passwordValidation,
+    schema.defaultValidationOptions,
+  );
+
+  const hashedPassword = await utils.hashPassword(validObj.password);
+  await usersQueries.udpatePassword(req.db, id, hashedPassword);
+  return res.json({ success: 'Password changed' });
+});

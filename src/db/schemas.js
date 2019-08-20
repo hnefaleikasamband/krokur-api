@@ -71,6 +71,17 @@ const boutSchema = Joi.object().keys({
     .required(),
 });
 
+const passwordValidation = Joi.object().keys({
+  password: Joi.string()
+    .min(5)
+    .required()
+    .strict(),
+  confirmPassword: Joi.string()
+    .valid(Joi.ref('password'))
+    .required()
+    .strict(),
+});
+
 const defaultValidationOptions = {
   abortEarly: false,
   allowUnknown: true,
@@ -82,5 +93,6 @@ export default {
   clubSchema,
   athleteSchema,
   boutSchema,
+  passwordValidation,
   defaultValidationOptions,
 };
