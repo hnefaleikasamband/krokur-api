@@ -82,6 +82,20 @@ const passwordValidation = Joi.object().keys({
     .strict(),
 });
 
+const userWithoutPasswordSchema = Joi.object().keys({
+  id: UUIDv4.required(),
+  email: Joi.string()
+    .email({ minDomainAtoms: 2 })
+    .lowercase()
+    .required(),
+  name: Joi.string().required(),
+  club: UUIDv4.when('role', { is: 'COACH', then: UUIDv4.required() }),
+  role: Joi.string()
+    .uppercase()
+    .valid('ADMIN', 'COACH', 'JUDGE')
+    .required(),
+});
+
 const defaultValidationOptions = {
   abortEarly: false,
   allowUnknown: true,
@@ -94,5 +108,6 @@ export default {
   athleteSchema,
   boutSchema,
   passwordValidation,
+  userWithoutPasswordSchema,
   defaultValidationOptions,
 };
