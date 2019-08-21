@@ -94,6 +94,7 @@ const userWithoutPasswordSchema = Joi.object().keys({
     .uppercase()
     .valid('ADMIN', 'COACH', 'JUDGE')
     .required(),
+  disabled: Joi.boolean().default(false),
 });
 
 const defaultValidationOptions = {

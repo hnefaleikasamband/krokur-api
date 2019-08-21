@@ -18,7 +18,7 @@ const udpatePassword = async (db, id, password) => db.one('UPDATE users SET pass
 });
 
 const updateUserWithoutPassword = async (db, user) => db.one(
-  'UPDATE users SET email = ${email}, name = ${name}, club = ${club}, role = ${role} WHERE id = ${id} RETURNING *',
+  'UPDATE users SET email = ${email}, name = ${name}, club = ${club}, role = ${role}, disabled = ${disabled} WHERE id = ${id} RETURNING *',
   user,
 );
 
