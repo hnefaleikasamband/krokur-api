@@ -4,6 +4,7 @@ import Joi from 'joi';
 import schema from '../db/schemas';
 import { athletesQueries, achievementsQueries, boutsQueries } from '../db/index';
 import utils from '../services/utils';
+import logger from '../config/logger';
 
 // To be able to run async/await
 import '@babel/polyfill';
@@ -67,7 +68,7 @@ athleteRouter.post(
       await achievementsQueries.startAchievements(req.db, newAthlete.id);
       return res.redirect(303, `/api/v1/athletes/${newAthlete.id}`);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       await athletesQueries.removeAthlete(req.db, newAthlete.id);
       return res
         .status(500)
@@ -146,7 +147,7 @@ athleteRouter.post(
         await achievementScore.updateAchievement(req.db, athleteId);
       }
     } catch (error) {
-      console.log('<> ERROR, COULD NOT UPDATE ACHIEVEMENT BECAUSE:', error);
+      logger.fatal('<>ERROR, COULD NOT UPDATE ACHIEVEMENT BECAUSE:', error);
       return res
         .status(500)
         .json({ error: 'Could not save bout, error updating achievement history.' });

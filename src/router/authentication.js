@@ -4,6 +4,7 @@ import config from '../config/main';
 import { usersQueries, clubsQueries } from '../db/index';
 import schema from '../db/schemas';
 import utils from '../services/utils';
+import logger from '../config/logger';
 // To be able to run async/await
 import '@babel/polyfill';
 
@@ -18,7 +19,7 @@ async function setUserInfo(db, user) {
   try {
     club = user.club ? (await clubsQueries.findClubById(db, user.club))[0] : null;
   } catch (error) {
-    console.log('<> Error fetching club in setUserInfo:', error);
+    logger.error('Error fetching club in setUserInfo:', error);
     club = null;
   }
   return {
@@ -77,8 +78,7 @@ exports.register = async function register(req, res) {
     if (error.name === 'ValidationError') {
       return res.status(400).json({ error: error.message });
     }
-    // FIXME: This needs to be logged properly!!
-    console.log('Error saving user:', error);
+    logger.error('Error registering user:', error);
     return res.status(500).json({ error: 'Error saving user, check logs for details' });
   }
 };
@@ -90,8 +90,8 @@ exports.register = async function register(req, res) {
 // Role authorization check
 exports.restrictAccess = function hasAccess(roles) {
   return async (req, res, next) => {
+    const { user } = req;
     try {
-      const { user } = req;
       const currentUser = await usersQueries.findUserById(req.db, user.id);
       // If user is found, check role.
       if (roles.includes(currentUser[0].role)) {
@@ -101,7 +101,7 @@ exports.restrictAccess = function hasAccess(roles) {
       res.status(401).send('Unauthorized');
       return next('Unauthorized');
     } catch (error) {
-      console.error('Access fail:', error);
+      logger.error(`Access fail for user: ${user.id}`, error);
       return next('Unauthorized');
     }
   };
@@ -116,15 +116,13 @@ exports.getUsers = async function getUsers(req, res) {
 
     return res.status(201).json({ users });
   } catch (error) {
-    // FIXME: This needs to be logged properly!!
-    console.log('Error fetching users from database:', error);
+    logger.error('Error fetching users from database:', error);
     return res.status(500).json({ error: 'Error fetching users from database' });
   }
 };
 
 exports.updatePassword = utils.dreamCatcher(async (req, res) => {
   const { id } = req.params;
-  console.log(req.body);
   const validObj = await Joi.validate(
     req.body,
     schema.passwordValidation,
@@ -141,7 +139,7 @@ exports.updateUser = utils.dreamCatcher(async (req, res) => {
 
   const existingUser = await usersQueries.findUserById(req.db, user.id);
   if (!existingUser.length > 0) {
-    console.log(`Failed updating user: ${user.id} because there is no user with that id.`);
+    logger.error(`Failed updating user: ${user.id} because there is no user with that id.`);
     return res.status(400).json({ error: 'Bad request' });
   }
 

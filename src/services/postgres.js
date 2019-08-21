@@ -1,5 +1,6 @@
 import pgPromise from 'pg-promise';
 import config from '../config/main';
+import logger from '../config/logger';
 
 const pgp = pgPromise();
 
@@ -11,7 +12,7 @@ const db = (connectionString = config.database) => {
     .then((connection) => {
       connection.done();
     })
-    .catch(err => console.log(err));
+    .catch(err => logger.error(err));
   return database;
 };
 

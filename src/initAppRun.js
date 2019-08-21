@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { usersQueries } from './db/index';
 import schema from './db/schemas';
 import utils from './services/utils';
+import logger from './config/logger';
 
 async function addSuperUser(dbConn) {
   const user = {
@@ -23,7 +24,7 @@ async function addSuperUser(dbConn) {
   validatedUser.club = validatedUser.club;
 
   const newUser = await usersQueries.addUser(dbConn, validatedUser);
-  console.log(
+  logger.info(
     `Inserted Super User:\n\tname(email): ${newUser.name}(${newUser.email}),\n\trole: ${
       newUser.role
     }\n\tdisabled: ${newUser.disabled}`,
@@ -32,17 +33,16 @@ async function addSuperUser(dbConn) {
 
 const init = async (dbConn) => {
   try {
-    console.log('... checking for super-user');
+    logger.info('... checking for super-user');
     const users = await usersQueries.getAllUsers(dbConn);
     if (users && users.length > 0) {
-      console.log('... There are some users already in the database, super-user was not added!');
+      logger.info('... There are some users already in the database, super-user was not added!');
       return;
     }
     await addSuperUser(dbConn);
     return;
   } catch (error) {
-    console.log('... Error caught when trying to run super-user init');
-    console.log(error);
+    logger.error({ message: '... Error caught when trying to run super-user init', error });
   }
 };
 
