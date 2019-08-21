@@ -7,6 +7,7 @@ import PostgresDB from './services/postgres';
 import config from './config/main';
 import router from './router/index';
 import checkSuperUser from './initAppRun';
+import logger from './config/logger';
 
 try {
   (async () => {
@@ -44,13 +45,13 @@ try {
     app.use(dbMiddleWare);
 
     app.listen(config.port, () => {
-      console.log('Server is running on port: ', config.port);
+      logger.info('Server is running on port: ', config.port);
     });
 
     router(app);
   })();
 } catch (error) {
-  console.log(error);
+  logger.error(error);
   process.exit();
 }
 

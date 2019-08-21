@@ -44,6 +44,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg-promise": "^8.6.0",
+    "pino": "^5.13.2",
     "winston": "^2.4.1"
   }
 }

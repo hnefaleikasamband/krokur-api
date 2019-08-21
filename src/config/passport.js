@@ -4,6 +4,7 @@ import LocalStrategy from 'passport-local';
 import bcrypt from 'bcryptjs';
 import config from './main';
 import { usersQueries } from '../db/index';
+import logger from './logger';
 
 // Login strategy
 const localLogin = new LocalStrategy(
@@ -18,7 +19,7 @@ const localLogin = new LocalStrategy(
 
       return done(null, false, { error: 'Your login details could not be verified' });
     } catch (error) {
-      console.log('Error in login strategy:', error);
+      logger.error('Error in login strategy:', error);
       return done(null, false, { error: 'Your login details could not be verified' });
     }
   },
@@ -35,7 +36,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, async (req, payload, done) => {
   try {
     return done(null, payload);
   } catch (error) {
-    console.log('Error in JWT strategy:', error);
+    logger.error('Error in JWT strategy:', error);
     return done(null, false);
   }
 });

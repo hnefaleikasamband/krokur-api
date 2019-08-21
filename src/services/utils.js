@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { achievementsQueries } from '../db/index';
+import logger from '../config/logger';
 
 const hashPassword = async (password) => {
   const SALT_FACTOR = 12;
@@ -21,7 +22,7 @@ const dreamCatcher = route => async (req, res) => {
     if (err.name === 'ValidationError') {
       return res.status(400).json({ error: err.message });
     }
-    console.log(err);
+    logger.error(err);
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
@@ -67,7 +68,7 @@ const achievementCheck = (data) => {
   } else {
     response.needsToUpdate = false;
   }
-  console.log(
+  logger.info(
     ` <Achievement-Process> ... Athlete: ${athleteId} update: ${JSON.stringify(
       updateAchievement,
     )} for achievement: ${response.achievementName}`,
