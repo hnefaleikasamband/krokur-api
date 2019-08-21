@@ -62,7 +62,9 @@ exports.register = async function register(req, res) {
       schema.userSchema,
       schema.defaultValidationOptions,
     );
-    validatedUser.password = await utils.hashPassword(validatedUser.password);
+    const hashedPw = await utils.hashPassword(validatedUser.password);
+    validatedUser.password = hashedPw;
+    validatedUser.confirmPassword = hashedPw;
     validatedUser.club = validatedUser.club;
 
     const newUser = await usersQueries.addUser(req.db, validatedUser);
@@ -110,7 +112,6 @@ exports.restrictAccess = function hasAccess(roles) {
 // ========================================
 exports.getUsers = async function getUsers(req, res) {
   try {
-    // TODO: We will need to clean up this data before sending it (e.g. passwords)
     const users = await usersQueries.getAllUsers(req.db);
 
     return res.status(201).json({ users });
@@ -133,4 +134,31 @@ exports.updatePassword = utils.dreamCatcher(async (req, res) => {
   const hashedPassword = await utils.hashPassword(validObj.password);
   await usersQueries.udpatePassword(req.db, id, hashedPassword);
   return res.json({ success: 'Password changed' });
+});
+
+exports.updateUser = utils.dreamCatcher(async (req, res) => {
+  const user = req.body;
+
+  const existingUser = await usersQueries.findUserByEmail(req.db, user.email);
+  if (!existingUser.length > 0) {
+    console.log(`Failed updating user: ${user} because there is no user with that email.`);
+    return res.status(400).json({ error: 'Bad request' });
+  }
+
+  const validatedUser = await Joi.validate(
+    user,
+    schema.userWithoutPasswordSchema,
+    schema.defaultValidationOptions,
+  );
+  validatedUser.club = validatedUser.club;
+
+  await usersQueries.updateUserWithoutPassword(req.db, validatedUser);
+  return res.status(200).json({ success: 'User updated successfully' });
+});
+
+exports.setDisabledValue = utils.dreamCatcher(async (req, res) => {
+  const { id } = req.params;
+  const { disabled } = req.body;
+  await usersQueries.setDisabledValue(req.db, id, !!disabled);
+  return res.json({ success: 'Updated disabled value' });
 });

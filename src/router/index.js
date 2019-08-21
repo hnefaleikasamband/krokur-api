@@ -4,6 +4,7 @@ import '../config/passport';
 import AuthAccess from './authentication';
 import athletes from './athletes';
 import club from './clubs';
+import users from './users';
 import utils from '../services/utils';
 
 // Middleware for login and auth
@@ -23,14 +24,7 @@ export default function (app) {
     AuthAccess.restrictAccess([ADMIN]),
     AuthAccess.register,
   );
-  apiRoutes.get('/users', requireAuth, AuthAccess.restrictAccess([ADMIN]), AuthAccess.getUsers);
-  apiRoutes.post('/users', requireAuth, AuthAccess.restrictAccess([ADMIN]), AuthAccess.register);
-  apiRoutes.put(
-    '/users/:id/password',
-    requireAuth,
-    AuthAccess.restrictAccess([ADMIN]),
-    AuthAccess.updatePassword,
-  );
+  apiRoutes.use('/users', requireAuth, users);
   apiRoutes.use('/athletes', requireAuth, athletes);
   apiRoutes.use('/clubs', requireAuth, club);
 
