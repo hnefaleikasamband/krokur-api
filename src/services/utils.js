@@ -20,7 +20,7 @@ const dreamCatcher = route => async (req, res) => {
     return await route(req, res);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      return res.status(400).json({ error: err.message });
+      return res.status(400).json({ error: err.details[0].message || err.message });
     }
     logger.error(err);
     return res.status(500).json({ error: 'Internal server error.' });
