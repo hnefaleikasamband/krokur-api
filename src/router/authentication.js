@@ -123,6 +123,13 @@ exports.getUsers = async function getUsers(req, res) {
 
 exports.updatePassword = utils.dreamCatcher(async (req, res) => {
   const { id } = req.params;
+
+  const existingUser = await usersQueries.findUserById(req.db, id);
+  if (!existingUser.length > 0) {
+    logger.error(`Failed updating password for user: ${id} because there is no user with that id.`);
+    return res.status(400).json({ error: 'Bad request' });
+  }
+
   const validObj = await Joi.validate(
     req.body,
     schema.passwordValidation,
@@ -138,9 +145,9 @@ exports.updateUser = utils.dreamCatcher(async (req, res) => {
   const user = req.body;
   const { id } = req.params;
 
-  const existingUser = await usersQueries.findUserById(req.db, user.id);
+  const existingUser = await usersQueries.findUserById(req.db, id);
   if (!existingUser.length > 0) {
-    logger.error(`Failed updating user: ${user.id} because there is no user with that id.`);
+    logger.error(`Failed updating user: ${id} because there is no user with that id.`);
     return res.status(400).json({ error: 'Bad request' });
   }
 
