@@ -136,6 +136,7 @@ exports.updatePassword = utils.dreamCatcher(async (req, res) => {
 
 exports.updateUser = utils.dreamCatcher(async (req, res) => {
   const user = req.body;
+  const { id } = req.params;
 
   const existingUser = await usersQueries.findUserById(req.db, user.id);
   if (!existingUser.length > 0) {
