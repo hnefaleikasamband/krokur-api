@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { achievementsQueries } from '../db/index';
+import { achievementsQueries, boutsQueries } from '../db/index';
 import logger from '../config/logger';
 
 const hashPassword = async (password) => {
@@ -27,53 +27,63 @@ const dreamCatcher = route => async (req, res) => {
   }
 };
 
-const calculateAchievement = (boutsLeft, date) => (boutsLeft <= 0 ? { date, boutsLeft } : { date: null, boutsLeft: parseInt(boutsLeft, 10) - 1 });
+const BASE_ACHIEVEMENT = {
+  athleteId: undefined,
+  diplomaDate: undefined,
+  diplomaBoutsLeft: 0,
+  bronzDate: undefined,
+  bronzBoutsLeft: 4,
+  silverDate: undefined,
+  silverBoutsLeft: 4,
+  goldDate: undefined,
+  goldBoutsLeft: 4,
+};
 
-const achievementCheck = (data) => {
-  const response = { needsToUpdate: true, updateAchievement: null, achievementName: '' };
+const newAchievementOrBoutsLeft = date => boutsLeft => (boutsLeft <= 0 ? { date, boutsLeft } : { date: null, boutsLeft: parseInt(boutsLeft, 10) - 1 });
 
-  if (data.points < 27) {
-    return { ...response, needsToUpdate: false };
+/**
+ * Does checks to see if any of the achievements should be updated
+ */
+const validateAchievement = (achievementStatus, { points, bout_date: matchDate }) => {
+  if (points < 27) return achievementStatus;
+  const newStatus = achievementStatus;
+  const achievementCheck = newAchievementOrBoutsLeft(matchDate);
+  if (!achievementStatus.diplomaDate) {
+    const { date, boutsLeft } = achievementCheck(achievementStatus.diplomaBoutsLeft);
+    newStatus.diplomaDate = date;
+    newStatus.diplomaBoutsLeft = boutsLeft;
+  } else if (!achievementStatus.bronzDate) {
+    const { date, boutsLeft } = achievementCheck(achievementStatus.bronzBoutsLeft);
+    newStatus.bronzDate = date;
+    newStatus.bronzBoutsLeft = boutsLeft;
+  } else if (points >= 31 && !achievementStatus.silverDate) {
+    const { date, boutsLeft } = achievementCheck(achievementStatus.silverBoutsLeft);
+    newStatus.silverDate = date;
+    newStatus.silverBoutsLeft = boutsLeft;
+  } else if (points >= 35 && !achievementStatus.goldDate) {
+    const { date, boutsLeft } = achievementCheck(achievementStatus.goldBoutsLeft);
+    newStatus.goldDate = date;
+    newStatus.goldBoutsLeft = boutsLeft;
   }
-  const {
-    athleteId,
-    diploma_date: diplomaDate,
-    diploma_bouts_left: diplomaBoutsLeft,
-    bronz_date: bronzDate,
-    bronz_bouts_left: bronzBoutsLeft,
-    silver_date: silverDate,
-    silver_bouts_left: silverBoutsLeft,
-    gold_date: goldDate,
-    gold_bouts_left: goldBoutsLeft,
-    points,
-    date,
-  } = data;
-  let updateAchievement;
-  if (!diplomaDate) {
-    updateAchievement = calculateAchievement(diplomaBoutsLeft, date);
-    response.updateAchievement = achievementsQueries.updateDiploma(updateAchievement);
-    response.achievementName = 'diploma';
-  } else if (!bronzDate) {
-    updateAchievement = calculateAchievement(bronzBoutsLeft, date);
-    response.updateAchievement = achievementsQueries.updateBronz(updateAchievement);
-    response.achievementName = 'bronz';
-  } else if (points >= 31 && !silverDate) {
-    updateAchievement = calculateAchievement(silverBoutsLeft, date);
-    response.updateAchievement = achievementsQueries.updateSilver(updateAchievement);
-    response.achievementName = 'silver';
-  } else if (points >= 35 && !goldDate) {
-    updateAchievement = calculateAchievement(goldBoutsLeft, date);
-    response.updateAchievement = achievementsQueries.updateGold(updateAchievement);
-    response.achievementName = 'gold';
-  } else {
-    response.needsToUpdate = false;
+
+  return newStatus;
+};
+
+const recalculateAndUpdateAchievements = async (db, athleteId) => {
+  try {
+    const allMatches = await boutsQueries.getAllBoutsForAthlete(db, athleteId, 'asc');
+    const achievementUpdate = allMatches.reduce(
+      (achievementStatus, match) => {
+        const newAchievementStatus = validateAchievement(achievementStatus, match);
+        return newAchievementStatus;
+      },
+      { ...BASE_ACHIEVEMENT },
+    );
+    return achievementsQueries.updateAchievements(db, athleteId, achievementUpdate);
+  } catch (error) {
+    logger.fatal(`Could not update achievements for athlete: ${athleteId}`, error);
+    return Promise.reject(error);
   }
-  logger.info(
-    ` <Achievement-Process> ... Athlete: ${athleteId} update: ${JSON.stringify(
-      updateAchievement,
-    )} for achievement: ${response.achievementName}`,
-  );
-  return response;
 };
 
 const snakeToCamelCase = snek => snek.replace(/(_\w)/g, big => big[1].toUpperCase());
@@ -98,7 +108,7 @@ export default {
   hashPassword,
   ROLES,
   dreamCatcher,
-  achievementCheck,
+  recalculateAndUpdateAchievements,
   snakeToCamelCase,
   mapDbObjectToResponse,
 };

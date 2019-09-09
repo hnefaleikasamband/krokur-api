@@ -133,26 +133,8 @@ athleteRouter.post(
       bout.athleteClubShortHand = athlete.club_shorthand;
     }
     const validBout = await Joi.validate(bout, schema.boutSchema, schema.defaultValidationOptions);
-
-    const currentAchievements = await achievementsQueries.getAchievementStatus(req.db, athleteId);
     const newBout = await boutsQueries.addBout(req.db, validBout);
-    try {
-      const achievementScore = utils.achievementCheck({
-        athleteId,
-        ...currentAchievements[0],
-        points: bout.points,
-        date: bout.boutDate,
-      });
-      if (achievementScore.needsToUpdate) {
-        await achievementScore.updateAchievement(req.db, athleteId);
-      }
-    } catch (error) {
-      logger.fatal('<>ERROR, COULD NOT UPDATE ACHIEVEMENT BECAUSE:', error);
-      return res
-        .status(500)
-        .json({ error: 'Could not save bout, error updating achievement history.' });
-    }
-
+    await utils.recalculateAndUpdateAchievements(req.db, athleteId);
     return res.status(201).json(utils.mapDbObjectToResponse(newBout));
   }),
 );
