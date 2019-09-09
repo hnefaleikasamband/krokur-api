@@ -1,3 +1,5 @@
+import pgPromise from 'pg-promise';
+
 const getAchievementsById = async (db, athleteId) => db.any(
   'SELECT A.id, A.name, A.ssn, AC.diploma_date, AC.diploma_bouts_left, AC.bronz_date, AC.bronz_bouts_left, '
       + 'AC.silver_date, AC.silver_bouts_left, AC.gold_date, AC.gold_bouts_left '
@@ -31,6 +33,18 @@ const updateGold = data => async (db, athleteId) => db.one(
   { ...data, athleteId },
 );
 
+const updateAchievements = async (db, athleteId, achievements) => db.one(
+  'UPDATE achievements SET diploma_date = ${diplomaDate}, diploma_bouts_left = ${diplomaBoutsLeft}, '
+      + 'bronz_date = ${bronzDate}, bronz_bouts_left = ${bronzBoutsLeft}, '
+      + 'silver_date = ${silverDate}, silver_bouts_left = ${silverBoutsLeft}, '
+      + 'gold_date = ${goldDate}, gold_bouts_left = ${goldBoutsLeft} '
+      + 'WHERE athlete_id = ${athleteId} RETURNING *',
+  {
+    ...achievements,
+    athleteId,
+  },
+);
+
 export default {
   getAchievementsById,
   startAchievements,
@@ -39,4 +53,5 @@ export default {
   updateBronz,
   updateSilver,
   updateGold,
+  updateAchievements,
 };
