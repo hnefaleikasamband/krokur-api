@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   club uuid REFERENCES clubs(id),
   disabled boolean default false not null,
   role varchar(64),
+  google_id varchar(255),
   created_at timestamp not null default now(),
   updated_at timestamp not null default now()
 );
