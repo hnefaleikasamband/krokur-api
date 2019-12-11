@@ -88,7 +88,7 @@ exports.register = async function register(req, res) {
 // ========================================
 
 // Role authorization check
-exports.restrictAccess = function hasAccess(roles) {
+exports.restrictAccessTo = function hasAccess(roles) {
   return async (req, res, next) => {
     const { user } = req;
     try {

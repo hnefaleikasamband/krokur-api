@@ -21,7 +21,7 @@ export default function (app) {
   apiRoutes.post(
     '/auth/register',
     requireAuth,
-    AuthAccess.restrictAccess([ADMIN]),
+    AuthAccess.restrictAccessTo([ADMIN]),
     AuthAccess.register,
   );
   apiRoutes.use('/users', requireAuth, users);
