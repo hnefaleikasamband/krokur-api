@@ -40,6 +40,14 @@ exports.login = async function login(req, res) {
   });
 };
 
+exports.redirectLogin = async function redirectLogin(req, res) {
+  const userInfo = await setUserInfo(req.db, req.user);
+  const { nextRoute } = req.authInfo;
+  const token = generateToken(userInfo);
+  if (nextRoute) return res.redirect(`${nextRoute}?p=${token}`);
+  return res.redirect(`${config.krokurWeb}/dashboard?p=${token}`);
+};
+
 exports.authedUser = async function authedUser(req, res) {
   if (!req.user || req.user === undefined) {
     return res.status(401).send();

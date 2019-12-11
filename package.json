@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "start": "nodemon --exec babel-node src/app.js",
+    "start": "env $(cat .env) nodemon --exec babel-node src/app.js",
     "build": "npm run clean; babel -d dist src -s",
     "seed": "babel-node src/dbSeeder.js",
     "clean": "rm -rf dist",
@@ -40,6 +40,7 @@
     "kennitala": "^1.2.0",
     "morgan": "^1.9.1",
     "passport": "^0.4.0",
+    "passport-google-oauth": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg-promise": "^8.6.0",
