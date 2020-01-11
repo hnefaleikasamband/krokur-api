@@ -5,6 +5,7 @@ import AuthAccess from './authentication';
 import athletes from './athletes';
 import club from './clubs';
 import users from './users';
+import match from './matches';
 import utils from '../services/utils';
 import config from '../config/main';
 
@@ -42,6 +43,7 @@ export default function (app) {
   apiRoutes.use('/users', requireAuth, users);
   apiRoutes.use('/athletes', requireAuth, athletes);
   apiRoutes.use('/clubs', requireAuth, club);
+  apiRoutes.use('/match', requireAuth, match);
 
   apiRoutes.get('/', requireAuth, (req, res) => {
     res.json({ success: true });
