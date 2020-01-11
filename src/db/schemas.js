@@ -64,11 +64,36 @@ const boutSchema = Joi.object().keys({
     .min(9)
     .max(45)
     .required(),
-  organizer: Joi.string()
-    .min(2)
-    .max(5)
-    .uppercase()
+  organizer: SHORTHAND.required(),
+});
+
+const fullMatchSchema = Joi.object().keys({
+  athleteAId: UUIDv4.required(),
+  athleteAName: Joi.string().required(),
+  athleteAClubShortHand: Joi.alternatives()
+    .try(SHORTHAND, UUIDv4)
     .required(),
+  athleteAPoints: Joi.number()
+    .min(9)
+    .max(45)
+    .required(),
+  athleteBId: UUIDv4.required(),
+  athleteBName: Joi.string().required(),
+  athleteBClubShortHand: Joi.alternatives()
+    .try(SHORTHAND, UUIDv4)
+    .required(),
+  athleteBPoints: Joi.number()
+    .min(9)
+    .max(45)
+    .required(),
+  class: Joi.string()
+    .uppercase()
+    .valid('A', 'B', 'C')
+    .required(),
+  boutDate: Joi.date()
+    .iso()
+    .required(),
+  organizer: SHORTHAND.required(),
 });
 
 const passwordValidation = Joi.object().keys({
@@ -104,10 +129,12 @@ const defaultValidationOptions = {
 };
 
 export default {
+  UUIDv4,
   userSchema,
   clubSchema,
   athleteSchema,
   boutSchema,
+  fullMatchSchema,
   passwordValidation,
   userWithoutPasswordSchema,
   defaultValidationOptions,
