@@ -1,10 +1,8 @@
 import Router from 'express';
-import kennitala from 'kennitala';
 import Joi from 'joi';
 import schema from '../db/schemas';
-import { athletesQueries, boutsQueries } from '../db/index';
+import { boutsQueries } from '../db/index';
 import utils from '../services/utils';
-import logger from '../config/logger';
 
 // To be able to run async/await
 import '@babel/polyfill';
@@ -61,10 +59,10 @@ matchRouter.post(
     await boutsQueries.addCompleteMatch(req.db, athleteAMatch, athleteBMatch);
 
     const recalcPromiseA = utils.recalculateAndUpdateAchievements(req.db, athleteAMatch.athleteId);
-    const recalcPromiseB = utils.recalculateAndUpdateAchievements(req.db, athleteAMatch.athleteId);
+    const recalcPromiseB = utils.recalculateAndUpdateAchievements(req.db, athleteBMatch.athleteId);
     await Promise.all([recalcPromiseA, recalcPromiseB]);
 
-    return res.status(201).json({ matches: [utils.mapDbObjectToResponse(athleteAMatch), utils.mapDbObjectToResponse(athleteAMatch)] });
+    return res.status(201).json({ matches: [utils.mapDbObjectToResponse(athleteAMatch), utils.mapDbObjectToResponse(athleteBMatch)] });
   }),
 );
 
