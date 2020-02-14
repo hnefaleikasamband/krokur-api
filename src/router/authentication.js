@@ -131,7 +131,7 @@ exports.updatePassword = utils.dreamCatcher(async (req, res) => {
   const { id } = req.params;
 
   const existingUser = await usersQueries.findUserById(req.db, id);
-  if (!existingUser.length > 0) {
+  if (!(existingUser.length > 0)) {
     logger.error(`Failed updating password for user: ${id} because there is no user with that id.`);
     return res.status(400).json({ error: 'Bad request' });
   }
@@ -150,7 +150,7 @@ exports.updateUser = utils.dreamCatcher(async (req, res) => {
   const user = req.body;
   const { id } = req.params;
   const existingUser = await usersQueries.findUserById(req.db, id);
-  if (!existingUser.length > 0) {
+  if (!(existingUser.length > 0)) {
     logger.error(`Failed updating user: ${id} because there is no user with that id.`);
     return res.status(400).json({ error: 'Bad request' });
   }
