@@ -16,7 +16,7 @@ try {
     const logLevel = process.env.LOGGING === 'production' ? 'combined' : 'dev';
     app.use(log(logLevel)); // Using morgan for logging express requests
     app.use(bodyParser.urlencoded({ extended: false })); // Parses urlencoded bodies
-    app.use(bodyParser.json()); // Send JSON responses
+    app.use(bodyParser.json()); // middleware that only parses json, only if the content-type matches.
 
     app.use((req, res, next) => {
       res.header('Access-Control-Allow-Origin', '*');

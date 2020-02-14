@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import Joi from 'joi';
 import config from '../config/main';
 import { usersQueries, clubsQueries } from '../db/index';
 import schema from '../db/schemas';
@@ -66,9 +65,8 @@ exports.register = async function register(req, res) {
       return res.status(400).send({ error: 'User with that email already exists' });
     }
 
-    const validatedUser = await Joi.validate(
+    const { value: validatedUser } = await schema.userSchema.validate(
       user,
-      schema.userSchema,
       schema.defaultValidationOptions,
     );
     const hashedPw = await utils.hashPassword(validatedUser.password);
@@ -133,40 +131,39 @@ exports.updatePassword = utils.dreamCatcher(async (req, res) => {
   const { id } = req.params;
 
   const existingUser = await usersQueries.findUserById(req.db, id);
-  if (!existingUser.length > 0) {
+  if (!(existingUser.length > 0)) {
     logger.error(`Failed updating password for user: ${id} because there is no user with that id.`);
     return res.status(400).json({ error: 'Bad request' });
   }
 
-  const validObj = await Joi.validate(
+  const { value } = await schema.passwordValidation.validate(
     req.body,
-    schema.passwordValidation,
     schema.defaultValidationOptions,
   );
 
-  const hashedPassword = await utils.hashPassword(validObj.password);
-  await usersQueries.udpatePassword(req.db, id, hashedPassword);
+  const hashedPassword = await utils.hashPassword(value.password);
+  await usersQueries.updatePassword(req.db, id, hashedPassword);
   return res.json({ success: 'Password changed' });
 });
 
 exports.updateUser = utils.dreamCatcher(async (req, res) => {
   const user = req.body;
   const { id } = req.params;
-
   const existingUser = await usersQueries.findUserById(req.db, id);
-  if (!existingUser.length > 0) {
+  if (!(existingUser.length > 0)) {
     logger.error(`Failed updating user: ${id} because there is no user with that id.`);
     return res.status(400).json({ error: 'Bad request' });
   }
+  if (user.id !== id) {
+    return res.status(400).json({ error: 'ID\'s do not match' });
+  }
 
-  const validatedUser = await Joi.validate(
+  await schema.userWithoutPasswordSchema.validate(
     user,
-    schema.userWithoutPasswordSchema,
     schema.defaultValidationOptions,
   );
-  validatedUser.club = validatedUser.club;
 
-  await usersQueries.updateUserWithoutPassword(req.db, validatedUser);
+  await usersQueries.updateUserWithoutPassword(req.db, user);
   return res.status(200).json({ success: 'User updated successfully' });
 });
 

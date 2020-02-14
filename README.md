@@ -1,94 +1,80 @@
 # Krókur API
 
-This is the backend for the Diploma boxing project Krókur. It handles all requests regarding data being displayed on the angular frontend.
+This is the backend for the Diploma boxing project Krókur. Krókurs objective is to help manage tournament & matches related to Diploma boxing in Iceland.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-The backend depons on NodeJS and MongoDB. It is originally developed on Ubuntu 18.04 but you can follow the installation instruction for your operating system on the projects website.
-
-[Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
-[MongoDB](https://docs.mongodb.com/manual/installation/)
-
-[NodeJS](https://nodejs.org/en/download/)
+The api is built on [NodeJS](https://nodejs.org/en/download/) using [Express](https://expressjs.com/) as it's http wrapper.
 
 We highly recommend using a version manager for node like [NVM](https://github.com/creationix/nvm).
 
-## Installing
-*Notice! the latter expects you are installing on Ubuntu, you can follow along with most of the commands for other operating systems but keep this in mind.*
-
-After installing both MongoDB and NVM we will start by installing Node 10.7.0.
 ```
-nvm install 10.7.0
+nvm install
 ``` 
 
-If you just installed NVM this will set the default to use 10.7.0, but if you where using another version add `nvm use 10.7.0`.
+If nvm does not set the current node version to what you just installed, run `nvm use`.
 
 
-If you haven't already, now is the time to clone the repo
-```
-git clone git@git.mikligardur.com:HNI/diploma-umsysla.git
-```
+Technically [Docker](https://docs.docker.com/install/) is not necessary, but having docker locally significantly helps managing postgres & testing the built api image.
 
-If you are considering contributing to the project we recommend using the dev branch
-```
-git checkout dev
-```
+---
+## Installing
+
 
 ### Install node dependencies
-cd into the backend directory ( `cd diploma-umsysla/backend` ) and run 
-
 ```
 npm install
 ```
 
-### Create config file
-You need to copy and rename the config file `src/config/main-default.js` to `src/config/main.js` 
-
+### Create a `.env` at the root of the project. The following values marked with a star are required
 ```
-cp src/config/main-default.js src/config/main.js
-```
-and then update the file with correct information
-
-### Seed database.
-If you like to have some dummy data for testing you can run
-```
-npm run seed
+PORT=<port for service>
+DB_URI=<postgres://PATH_TO_DB>
+JWT_SECRET=<your super random secret string>
+KROKUR_WEB=<PATH TO WEB. f.e. http://localhost:3001> *
+GOOGLE_ID=<GOOGLE-ID for logging in with google> *
+GOOGLE_SECRET=<GOOGLE-SECRET for logging in with google> *
+GOOGLE_CALLBACK_URL=<path to api callback url for google auth>
 ```
 
-### All set up
-Now everything should be set up and you can just run it with
+### Set up local postgreSQL using docker
+We like to use docker to manage our postgreSQL instance locally. This makes it easy to run a specific version of PG that mimics the production one.
+
+Pull the latest stable postgres image
+```
+docker pull postgres
+```
+To pull down a specific version you can `docker pull postgres:[tag_you_want]`
+
+If you are running a unix like system, the only thing needed to do now is run 
+```
+npm run pg-docker
+```
+
+This mounts a persistent volume to the postgres container. The data will reside in `~/docker/volumes/postgres`
+
+---
+## Running & building
+Everything should now be set up & ready for you to run the project locally.
+
 ```
 npm start
 ```
 
+and to build
+```
+npm run build
+```
+
+
 ## Running the tests
 
-Currently there are no automated tests.
-
-## Built With
-
-* [VS Code](https://code.visualstudio.com/Download) - Code editor
-* [NodeJS](https://nodejs.org) - JavaScript runtime
-* [MongoDB](https://www.mongodb.com/) - Document-oriented database program.
-* [Express](https://expressjs.com/) - Web application framework
-* [Mongoose](http://mongoosejs.com/) - MongoDB object modeling
+Currently there are no tests.
 
 ## Contributing
 
-Please read [CONTRIBUTING.md]() for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://git.mikligardur.com/HNI/diploma-umsysla/tags). 
-
-## Authors
-
-* **Gunnar Davíð** - *Initial work* - [GDGunnars(self hosted)](http://git.mikligardur.com/gdgunnars) / [github](https://github.com/gdgunnars)
-
-See also the list of [contributors](https://git.mikligardur.com/HNI/diploma-umsysla/graphs/dev) who participated in this project.
-
+Currently we are not looking for contributors, but pull requests are accepted.

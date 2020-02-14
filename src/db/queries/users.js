@@ -15,7 +15,7 @@ const addUser = async (db, user) => db.one(
   user,
 );
 
-const udpatePassword = async (db, id, password) => db.one('UPDATE users SET password = ${password} WHERE id = ${id} RETURNING *', {
+const updatePassword = async (db, id, password) => db.one('UPDATE users SET password = ${password} WHERE id = ${id} RETURNING *', {
   id,
   password,
 });
@@ -41,7 +41,7 @@ export default {
   findUserByGoogleId,
   getAllUsers,
   addUser,
-  udpatePassword,
+  updatePassword,
   updateUserWithoutPassword,
   setDisabledValue,
   linkGoogleAccount,

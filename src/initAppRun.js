@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import { usersQueries, clubsQueries, athletesQueries } from './db/index';
 import schema from './db/schemas';
 import utils from './services/utils';
@@ -19,9 +18,8 @@ async function addSuperUser(dbConn) {
     role: 'ADMIN',
   };
 
-  const validatedUser = await Joi.validate(
+  const { value: validatedUser } = await schema.userSchema.validate(
     user,
-    schema.userSchema,
     schema.defaultValidationOptions,
   );
 
@@ -36,9 +34,8 @@ async function addSuperUser(dbConn) {
 
 
 async function addOrgClub(dbConn) {
-  const validatedClub = await Joi.validate(
+  const { value: validatedClub } = await schema.clubSchema.validate(
     ATHLETE_ORGANIZATION,
-    schema.clubSchema,
     schema.defaultValidationOptions,
   );
 
@@ -56,9 +53,8 @@ async function addAnonAthlete(dbConn, club) {
     club: club.id,
   };
 
-  const validatedAthlete = await Joi.validate(
+  const { value: validatedAthlete } = await schema.athleteSchema.validate(
     athlete,
-    schema.athleteSchema,
     schema.defaultValidationOptions,
   );
 
