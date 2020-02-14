@@ -1,5 +1,4 @@
 import Router from 'express';
-import Joi from 'joi';
 import schema from '../db/schemas';
 import { clubsQueries } from '../db/index';
 import utils from '../services/utils';
@@ -27,9 +26,8 @@ clubRouter.get(
 clubRouter.post(
   '/',
   utils.dreamCatcher(async (req, res) => {
-    const validatedClub = await Joi.validate(
+    const { value: validatedClub } = await schema.clubSchema.validate(
       req.body,
-      schema.clubSchema,
       schema.defaultValidationOptions,
     );
     const exists = await clubsQueries.findClubByShorthand(req.db, req.body.shorthand);
@@ -49,9 +47,8 @@ clubRouter.put(
       id: req.params.id,
       ...req.body,
     };
-    const validatedClub = await Joi.validate(
+    const { value: validatedClub } = await schema.clubSchema.validate(
       club,
-      schema.clubSchema,
       schema.defaultValidationOptions,
     );
 

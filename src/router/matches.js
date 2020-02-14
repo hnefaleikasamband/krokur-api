@@ -1,5 +1,4 @@
 import Router from 'express';
-import Joi from 'joi';
 import schema from '../db/schemas';
 import { boutsQueries } from '../db/index';
 import utils from '../services/utils';
@@ -13,7 +12,7 @@ matchRouter.get(
   '/:id',
   utils.dreamCatcher(async (req, res) => {
     const { id: boutId } = req.params;
-    await Joi.validate(boutId, schema.UUIDv4, schema.defaultValidationOptions);
+    await schema.UUIDv4.validate(boutId, schema.defaultValidationOptions);
     const bout = await boutsQueries.getBoutById(req.db, boutId);
     if (!bout.length > 0) {
       return res.status(400).json({ error: 'Match not found' });
@@ -26,7 +25,7 @@ matchRouter.post(
   '/',
   utils.dreamCatcher(async (req, res) => {
     const match = req.body;
-    await Joi.validate(match, schema.fullMatchSchema, schema.defaultValidationOptions);
+    await schema.fullMatchSchema.validate(match, schema.defaultValidationOptions);
 
     const athleteAMatch = {
       athleteId: match.athleteAId,
@@ -54,8 +53,8 @@ matchRouter.post(
       organizer: match.organizer,
     };
 
-    // const validMatchA = await Joi.validate(athleteAMatch, schema.boutSchema, schema.defaultValidationOptions);
-    // const validMatchB = await Joi.validate(athleteBMatch, schema.boutSchema, schema.defaultValidationOptions);
+    // const {value: validMatchA } = await schema.boutSchema.validate(athleteAMatch, schema.boutSchema, schema.defaultValidationOptions);
+    // const {value: validMatchB } = await schema.boutSchema.validate(athleteBMatch, schema.boutSchema, schema.defaultValidationOptions);
     await boutsQueries.addCompleteMatch(req.db, athleteAMatch, athleteBMatch);
 
     const recalcPromiseA = utils.recalculateAndUpdateAchievements(req.db, athleteAMatch.athleteId);

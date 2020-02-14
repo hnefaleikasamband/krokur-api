@@ -1,6 +1,5 @@
 import Router from 'express';
 import kennitala from 'kennitala';
-import Joi from 'joi';
 import schema from '../db/schemas';
 import { athletesQueries, achievementsQueries, boutsQueries } from '../db/index';
 import utils from '../services/utils';
@@ -53,9 +52,8 @@ athleteRouter.post(
       return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
     }
 
-    const validatedAthlete = await Joi.validate(
+    const { value: validatedAthlete } = await schema.athleteSchema.validate(
       athlete,
-      schema.athleteSchema,
       schema.defaultValidationOptions,
     );
 
@@ -87,9 +85,8 @@ athleteRouter.put(
       return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
     }
 
-    const validatedAthlete = await Joi.validate(
+    const { value: validatedAthlete } = await schema.athleteSchema.validate(
       athlete,
-      schema.athleteSchema,
       schema.defaultValidationOptions,
     );
 
@@ -132,7 +129,7 @@ athleteRouter.post(
       bout.athleteName = athlete.name;
       bout.athleteClubShortHand = athlete.club_shorthand;
     }
-    const validBout = await Joi.validate(bout, schema.boutSchema, schema.defaultValidationOptions);
+    const { value: validBout } = await schema.boutSchema.validate(bout, schema.defaultValidationOptions);
     const newBout = await boutsQueries.addBout(req.db, validBout);
     await utils.recalculateAndUpdateAchievements(req.db, athleteId);
     return res.status(201).json(utils.mapDbObjectToResponse(newBout));

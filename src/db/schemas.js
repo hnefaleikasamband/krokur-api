@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from '@hapi/joi';
 
 const UUIDv4 = Joi.string().guid({ version: 'uuidv4' });
 const SHORTHAND = Joi.string()
@@ -8,7 +8,7 @@ const SHORTHAND = Joi.string()
 
 const userSchema = Joi.object().keys({
   email: Joi.string()
-    .email({ minDomainAtoms: 2 })
+    .email()
     .lowercase()
     .required(),
   password: Joi.string()
@@ -20,7 +20,7 @@ const userSchema = Joi.object().keys({
     .required()
     .strict(),
   name: Joi.string().required(),
-  club: UUIDv4.when('role', { is: 'COACH', then: UUIDv4.required() }),
+  club: Joi.any().when('role', { is: 'COACH', then: UUIDv4.required() }),
   disabled: Joi.boolean().default(false),
   role: Joi.string()
     .uppercase()
@@ -110,11 +110,11 @@ const passwordValidation = Joi.object().keys({
 const userWithoutPasswordSchema = Joi.object().keys({
   id: UUIDv4.required(),
   email: Joi.string()
-    .email({ minDomainAtoms: 2 })
     .lowercase()
-    .required(),
+    .required()
+    .email(),
   name: Joi.string().required(),
-  club: UUIDv4.when('role', { is: 'COACH', then: UUIDv4.required() }),
+  club: Joi.any().when('role', { is: 'COACH', then: UUIDv4.required() }),
   role: Joi.string()
     .uppercase()
     .valid('ADMIN', 'COACH', 'JUDGE')
