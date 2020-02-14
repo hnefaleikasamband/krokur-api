@@ -1,5 +1,4 @@
-import pgPromise from 'pg-promise';
-
+/* eslint-disable no-template-curly-in-string */
 const getAchievementsById = async (db, athleteId) => db.any(
   'SELECT A.id, A.name, A.ssn, AC.diploma_date, AC.diploma_bouts_left, AC.bronz_date, AC.bronz_bouts_left, '
       + 'AC.silver_date, AC.silver_bouts_left, AC.gold_date, AC.gold_bouts_left '

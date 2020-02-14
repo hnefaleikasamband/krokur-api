@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 const getBoutById = async (db, id) => db.any('SELECT * from bouts where id = ${id}', { id });
 
 const getAllBoutsForAthlete = async (db, athleteId, order = 'desc') => db.any('SELECT * from bouts where athlete_id = ${athleteId} order by bout_date ${order^}', {

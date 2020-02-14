@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 const findClubById = (db, id) => db.any('SELECT * FROM clubs where id = ${id}', { id });
 
 const findClubByShorthand = (db, shorthand) => db.any('SELECT * FROM clubs where shorthand = ${shorthand}', { shorthand });

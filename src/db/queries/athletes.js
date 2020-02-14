@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 const findAthleteById = async (db, id) => db.any(
   'SELECT A.id, A.name, A.ssn, C.name as club, C.shorthand as club_shorthand, AC.diploma_date, AC.diploma_bouts_left, AC.bronz_date, '
       + 'AC.bronz_bouts_left, AC.silver_date, AC.silver_bouts_left, AC.gold_date, AC.gold_bouts_left '
