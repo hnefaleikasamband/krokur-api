@@ -5,7 +5,7 @@ import logger from '../config/logger';
 const pgp = pgPromise();
 
 const db = (connectionString = config.database) => {
-  const database = pgp({ connectionString, ssl: true });
+  const database = pgp({ connectionString, ssl: !connectionString.includes('localhost') });
   // Test if db connection works
   database
     .connect()
