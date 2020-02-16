@@ -18,7 +18,7 @@ async function addSuperUser(dbConn) {
     role: 'ADMIN',
   };
 
-  const { value: validatedUser } = await schema.userSchema.validate(
+  const validatedUser = await schema.userSchema.validateAsync(
     user,
     schema.defaultValidationOptions,
   );
@@ -33,7 +33,7 @@ async function addSuperUser(dbConn) {
 
 
 async function addOrgClub(dbConn) {
-  const { value: validatedClub } = await schema.clubSchema.validate(
+  const validatedClub = await schema.clubSchema.validateAsync(
     ATHLETE_ORGANIZATION,
     schema.defaultValidationOptions,
   );
@@ -52,7 +52,7 @@ async function addAnonAthlete(dbConn, club) {
     club: club.id,
   };
 
-  const { value: validatedAthlete } = await schema.athleteSchema.validate(
+  const validatedAthlete = await schema.athleteSchema.validateAsync(
     athlete,
     schema.defaultValidationOptions,
   );

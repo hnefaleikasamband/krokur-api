@@ -19,7 +19,7 @@ const getClubData = utils.dreamCatcher(async (req, res) => {
 });
 
 const addClub = utils.dreamCatcher(async (req, res) => {
-  const { value: validatedClub } = await schema.clubSchema.validate(
+  const validatedClub = await schema.clubSchema.validateAsync(
     req.body,
     schema.defaultValidationOptions,
   );
@@ -37,7 +37,7 @@ const updateClub = utils.dreamCatcher(async (req, res) => {
     id: req.params.id,
     ...req.body,
   };
-  const { value: validatedClub } = await schema.clubSchema.validate(
+  const validatedClub = await schema.clubSchema.validateAsync(
     club,
     schema.defaultValidationOptions,
   );

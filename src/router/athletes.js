@@ -47,7 +47,7 @@ const createAthlete = utils.dreamCatcher(async (req, res) => {
     return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
   }
 
-  const { value: validatedAthlete } = await schema.athleteSchema.validate(
+  const validatedAthlete = await schema.athleteSchema.validateAsync(
     athlete,
     schema.defaultValidationOptions,
   );
@@ -84,7 +84,7 @@ const updateAthlete = utils.dreamCatcher(async (req, res) => {
     return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
   }
 
-  const { value: validatedAthlete } = await schema.athleteSchema.validate(
+  const validatedAthlete = await schema.athleteSchema.validateAsync(
     athlete,
     schema.defaultValidationOptions,
   );
@@ -122,7 +122,7 @@ const addMatchForSingleAthlete = utils.dreamCatcher(async (req, res) => {
     bout.athleteName = athlete.name;
     bout.athleteClubShortHand = athlete.club_shorthand;
   }
-  const { value: validBout } = await schema.boutSchema.validate(bout, schema.defaultValidationOptions);
+  const validBout = await schema.boutSchema.validateAsync(bout, schema.defaultValidationOptions);
   const newBout = await boutsQueries.addBout(req.db, validBout);
   await utils.recalculateAndUpdateAchievements(req.db, athleteId);
   return res.status(201).json(utils.mapDbObjectToResponse(newBout));

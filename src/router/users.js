@@ -17,7 +17,7 @@ const register = async (req, res) => {
       return res.status(400).send({ error: 'User with that email already exists' });
     }
 
-    const { value: validatedUser } = await schema.userSchema.validate(
+    const validatedUser = await schema.userSchema.validateAsync(
       user,
       schema.defaultValidationOptions,
     );
@@ -59,7 +59,7 @@ const updatePassword = utils.dreamCatcher(async (req, res) => {
     return res.status(400).json({ error: 'Bad request' });
   }
 
-  const { value } = await schema.passwordValidation.validate(
+  const value = await schema.passwordValidation.validateAsync(
     req.body,
     schema.defaultValidationOptions,
   );
@@ -84,7 +84,7 @@ const updateUser = utils.dreamCatcher(async (req, res) => {
     user.club = null;
   }
 
-  await schema.userWithoutPasswordSchema.validate(
+  await schema.userWithoutPasswordSchema.validateAsync(
     user,
     schema.defaultValidationOptions,
   );
