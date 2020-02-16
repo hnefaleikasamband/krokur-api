@@ -1,4 +1,3 @@
-import Router from 'express';
 import kennitala from 'kennitala';
 import schema from '../db/schemas';
 import { athletesQueries, achievementsQueries, boutsQueries } from '../db/index';
@@ -8,132 +7,132 @@ import logger from '../config/logger';
 // To be able to run async/await
 import '@babel/polyfill';
 
-const athleteRouter = new Router();
+const getAllAthletesDetailed = utils.dreamCatcher(async (req, res) => {
+  const { user } = req;
+  if (user.role !== utils.ROLES.ADMIN && (user.role === utils.ROLES.COACH && !user.club)) {
+    return res.status(401).json('Unauthorized');
+  }
 
-athleteRouter.get(
-  '/manage-view',
-  utils.dreamCatcher(async (req, res) => {
-    const { user } = req;
-    if (user.role !== 'ADMIN' && (user.role === 'COACH' && !user.club)) {
-      return res.status(401).json('Unauthorized');
-    }
-
-    const athletes = user.role === 'ADMIN'
-      ? utils.mapDbObjectToResponse(await athletesQueries.getDetailedAllAthletes(req.db))
-      : utils.mapDbObjectToResponse(
-        await athletesQueries.getDetailedAllAthletesByClub(req.db, user.club.id),
-      );
-    return res.json({ athletes });
-  }),
-);
-
-athleteRouter.get(
-  '/:id?',
-  utils.dreamCatcher(async (req, res) => {
-    if (req.params.id) {
-      const athlete = await athletesQueries.findAthleteById(req.db, req.params.id);
-      if (!athlete.length > 0) {
-        return res.status(400).json({ error: 'Athlete not found' });
-      }
-      return res.json({ athlete: utils.mapDbObjectToResponse(athlete[0]) });
-    }
-
-    const athletes = utils.mapDbObjectToResponse(await athletesQueries.getAllAthletes(req.db));
-    return res.json({ athletes });
-  }),
-);
-
-athleteRouter.post(
-  '/',
-  utils.dreamCatcher(async (req, res) => {
-    const athlete = req.body;
-    athlete.ssn = kennitala.clean(athlete.ssn);
-    if (!kennitala.isValid(athlete.ssn)) {
-      return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
-    }
-
-    const { value: validatedAthlete } = await schema.athleteSchema.validate(
-      athlete,
-      schema.defaultValidationOptions,
+  const athletes = user.role === utils.ROLES.ADMIN
+    ? utils.mapDbObjectToResponse(await athletesQueries.getDetailedAllAthletes(req.db))
+    : utils.mapDbObjectToResponse(
+      await athletesQueries.getDetailedAllAthletesByClub(req.db, user.club.id),
     );
+  return res.json({ athletes });
+});
 
-    if (await athletesQueries.athleteExists(req.db, athlete.ssn)) {
-      return res.status(400).json({ error: 'Athlete already exists.' });
+const getSingleOrAllAthletes = utils.dreamCatcher(async (req, res) => {
+  if (req.params.id) {
+    const athlete = await athletesQueries.findAthleteById(req.db, req.params.id);
+    if (!athlete.length > 0) {
+      return res.status(400).json({ error: 'Athlete not found' });
     }
+    return res.json({ athlete: utils.mapDbObjectToResponse(athlete[0]) });
+  }
 
-    const newAthlete = await athletesQueries.addAthlete(req.db, validatedAthlete);
-    try {
-      await achievementsQueries.startAchievements(req.db, newAthlete.id);
-      return res.redirect(303, `/api/v1/athletes/${newAthlete.id}`);
-    } catch (error) {
-      logger.error(error);
-      await athletesQueries.removeAthlete(req.db, newAthlete.id);
-      return res
-        .status(500)
-        .json({ error: 'Something went wrong, reverting previous steps, check logs for details.' });
-    }
-  }),
-);
+  const athletes = utils.mapDbObjectToResponse(await athletesQueries.getAllAthletes(req.db));
+  return res.json({ athletes });
+});
 
-athleteRouter.put(
-  '/:id',
-  utils.dreamCatcher(async (req, res) => {
-    const athlete = req.body;
-    athlete.ssn = kennitala.clean(athlete.ssn);
+const createAthlete = utils.dreamCatcher(async (req, res) => {
+  const { user } = req;
+  const athlete = req.body;
+  if (user.role !== utils.ROLES.ADMIN
+    && user.role !== utils.ROLES.JUDGE
+    && (user.role === utils.ROLES.COACH && user.club !== athlete.club)) {
+    return res.status(401).json('Unauthorized');
+  }
+  athlete.ssn = kennitala.clean(athlete.ssn);
+  if (!kennitala.isValid(athlete.ssn)) {
+    return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
+  }
 
-    if (!kennitala.isValid(athlete.ssn)) {
-      return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
-    }
+  const { value: validatedAthlete } = await schema.athleteSchema.validate(
+    athlete,
+    schema.defaultValidationOptions,
+  );
 
-    const { value: validatedAthlete } = await schema.athleteSchema.validate(
-      athlete,
-      schema.defaultValidationOptions,
-    );
+  if (await athletesQueries.athleteExists(req.db, athlete.ssn)) {
+    return res.status(400).json({ error: 'Athlete already exists.' });
+  }
 
-    const oldAthlete = await athletesQueries.getAthleteCleanBasicInfoById(req.db, req.params.id);
-    if (!oldAthlete.length > 0) {
-      return res.status(404).json({ error: 'Athletes does not exists.' });
-    }
+  const newAthlete = await athletesQueries.addAthlete(req.db, validatedAthlete);
+  try {
+    await achievementsQueries.startAchievements(req.db, newAthlete.id);
+    return res.redirect(303, `/api/v1/athletes/${newAthlete.id}`);
+  } catch (error) {
+    logger.error(error);
+    await athletesQueries.removeAthlete(req.db, newAthlete.id);
+    return res
+      .status(500)
+      .json({ error: 'Something went wrong, reverting previous steps, check logs for details.' });
+  }
+});
 
-    const newAthleteInfo = { ...oldAthlete[0], ...validatedAthlete };
-    const savedAthlete = await athletesQueries.updateAthlete(req.db, newAthleteInfo);
-    return res.redirect(303, `/api/v1/athletes/${savedAthlete.id}`);
-  }),
-);
+const updateAthlete = utils.dreamCatcher(async (req, res) => {
+  const { user } = req;
+  const athlete = req.body;
+  if (user.role !== utils.ROLES.ADMIN
+    && user.role !== utils.ROLES.JUDGE
+    && (user.role === utils.ROLES.COACH && user.club !== athlete.club)) {
+    return res.status(401).json('Unauthorized');
+  }
 
-athleteRouter.get(
-  '/:athleteId/bouts',
-  utils.dreamCatcher(async (req, res) => {
-    const { athleteId } = req.params;
-    const bouts = utils.mapDbObjectToResponse(
-      await boutsQueries.getAllBoutsForAthlete(req.db, athleteId),
-    );
-    return res.json({ bouts });
-  }),
-);
+  athlete.ssn = kennitala.clean(athlete.ssn);
 
-athleteRouter.post(
-  '/:athleteId/bouts',
-  utils.dreamCatcher(async (req, res) => {
-    const bout = req.body;
-    const { athleteId } = req.params;
+  if (!kennitala.isValid(athlete.ssn)) {
+    return res.status(400).json({ error: 'SSN is not a valid Icelandic SSN' });
+  }
 
-    if (
-      !bout.athleteId
-      || bout.athleteId !== athleteId
-      || !bout.athleteName
-      || !bout.athleteClubShortHand
-    ) {
-      const athlete = (await athletesQueries.findAthleteById(req.db, athleteId))[0];
-      bout.athleteId = athleteId;
-      bout.athleteName = athlete.name;
-      bout.athleteClubShortHand = athlete.club_shorthand;
-    }
-    const { value: validBout } = await schema.boutSchema.validate(bout, schema.defaultValidationOptions);
-    const newBout = await boutsQueries.addBout(req.db, validBout);
-    await utils.recalculateAndUpdateAchievements(req.db, athleteId);
-    return res.status(201).json(utils.mapDbObjectToResponse(newBout));
-  }),
-);
+  const { value: validatedAthlete } = await schema.athleteSchema.validate(
+    athlete,
+    schema.defaultValidationOptions,
+  );
 
-export default athleteRouter;
+  const oldAthlete = await athletesQueries.getAthleteCleanBasicInfoById(req.db, req.params.id);
+  if (!oldAthlete.length > 0) {
+    return res.status(404).json({ error: 'Athletes does not exists.' });
+  }
+
+  const newAthleteInfo = { ...oldAthlete[0], ...validatedAthlete };
+  const savedAthlete = await athletesQueries.updateAthlete(req.db, newAthleteInfo);
+  return res.redirect(303, `/api/v1/athletes/${savedAthlete.id}`);
+});
+
+const getMatchesForAthlete = utils.dreamCatcher(async (req, res) => {
+  const { athleteId } = req.params;
+  const bouts = utils.mapDbObjectToResponse(
+    await boutsQueries.getAllBoutsForAthlete(req.db, athleteId),
+  );
+  return res.json({ bouts });
+});
+
+const addMatchForSingleAthlete = utils.dreamCatcher(async (req, res) => {
+  const bout = req.body;
+  const { athleteId } = req.params;
+
+  if (
+    !bout.athleteId
+    || bout.athleteId !== athleteId
+    || !bout.athleteName
+    || !bout.athleteClubShortHand
+  ) {
+    const athlete = (await athletesQueries.findAthleteById(req.db, athleteId))[0];
+    bout.athleteId = athleteId;
+    bout.athleteName = athlete.name;
+    bout.athleteClubShortHand = athlete.club_shorthand;
+  }
+  const { value: validBout } = await schema.boutSchema.validate(bout, schema.defaultValidationOptions);
+  const newBout = await boutsQueries.addBout(req.db, validBout);
+  await utils.recalculateAndUpdateAchievements(req.db, athleteId);
+  return res.status(201).json(utils.mapDbObjectToResponse(newBout));
+});
+
+export default {
+  getSingleOrAllAthletes,
+  getAllAthletesDetailed,
+  createAthlete,
+  updateAthlete,
+  getMatchesForAthlete,
+  addMatchForSingleAthlete,
+};
