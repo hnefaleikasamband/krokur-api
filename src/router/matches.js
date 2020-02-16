@@ -7,7 +7,7 @@ import '@babel/polyfill';
 
 const getMatch = utils.dreamCatcher(async (req, res) => {
   const { id: boutId } = req.params;
-  await schema.UUIDv4.validate(boutId, schema.defaultValidationOptions);
+  await schema.UUIDv4.validateAsync(boutId, schema.defaultValidationOptions);
   const bout = await boutsQueries.getBoutById(req.db, boutId);
   if (!bout.length > 0) {
     return res.status(400).json({ error: 'Match not found' });
@@ -17,7 +17,7 @@ const getMatch = utils.dreamCatcher(async (req, res) => {
 
 const addCompleteMatch = utils.dreamCatcher(async (req, res) => {
   const match = req.body;
-  await schema.fullMatchSchema.validate(match, schema.defaultValidationOptions);
+  await schema.fullMatchSchema.validateAsync(match, schema.defaultValidationOptions);
 
   const athleteAMatch = {
     athleteId: match.athleteAId,

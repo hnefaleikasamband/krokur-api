@@ -20,7 +20,7 @@ const userSchema = Joi.object().keys({
     .required()
     .strict(),
   name: Joi.string().required(),
-  club: Joi.any().when('role', { is: 'COACH', then: UUIDv4.required() }),
+  club: UUIDv4.allow(null).when('role', { is: 'COACH', then: UUIDv4.required() }),
   disabled: Joi.boolean().default(false),
   role: Joi.string()
     .uppercase()
@@ -114,7 +114,7 @@ const userWithoutPasswordSchema = Joi.object().keys({
     .required()
     .email(),
   name: Joi.string().required(),
-  club: Joi.any().when('role', { is: 'COACH', then: UUIDv4.required() }),
+  club: UUIDv4.allow(null).when('role', { is: 'COACH', then: UUIDv4.required() }),
   role: Joi.string()
     .uppercase()
     .valid('ADMIN', 'COACH', 'JUDGE')
