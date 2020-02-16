@@ -12,7 +12,7 @@ const db = (connectionString = config.database) => {
     .then((connection) => {
       connection.done();
     })
-    .catch(err => logger.error(err));
+    .catch((err) => logger.error(err));
   return database;
 };
 

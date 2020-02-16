@@ -15,19 +15,19 @@ const getAchievementStatus = async (db, athleteId) => db.any(
   { athleteId },
 );
 
-const updateDiploma = data => async (db, athleteId) => db.one(
+const updateDiploma = (data) => async (db, athleteId) => db.one(
   'UPDATE achievements SET diploma_date = ${date}, diploma_bouts_left = ${boutsLeft} WHERE athlete_id = ${athleteId} RETURNING *',
   { ...data, athleteId },
 );
-const updateBronz = data => async (db, athleteId) => db.one(
+const updateBronz = (data) => async (db, athleteId) => db.one(
   'UPDATE achievements SET bronz_date = ${date}, bronz_bouts_left = ${boutsLeft} WHERE athlete_id = ${athleteId} RETURNING *',
   { ...data, athleteId },
 );
-const updateSilver = data => async (db, athleteId) => db.one(
+const updateSilver = (data) => async (db, athleteId) => db.one(
   'UPDATE achievements SET silver_date = ${date}, silver_bouts_left = ${boutsLeft} WHERE athlete_id = ${athleteId} RETURNING *',
   { ...data, athleteId },
 );
-const updateGold = data => async (db, athleteId) => db.one(
+const updateGold = (data) => async (db, athleteId) => db.one(
   'UPDATE achievements SET gold_date = ${date}, gold_bouts_left = ${boutsLeft} WHERE athlete_id = ${athleteId} RETURNING *',
   { ...data, athleteId },
 );

@@ -24,7 +24,6 @@ async function addSuperUser(dbConn) {
   );
 
   validatedUser.password = await utils.hashPassword(validatedUser.password);
-  validatedUser.club = validatedUser.club;
 
   const newUser = await usersQueries.addUser(dbConn, validatedUser);
   logger.info(
@@ -75,7 +74,7 @@ const init = async (dbConn) => {
     const [users, clubs, anonExists] = await Promise.all([usersQuery, clubsQuery, anonExistsQuery]);
 
     if (!anonExists) {
-      const athleteOrgExists = clubs.find(c => c.shorthand === ATHLETE_ORGANIZATION.shorthand);
+      const athleteOrgExists = clubs.find((c) => c.shorthand === ATHLETE_ORGANIZATION.shorthand);
       console.log(athleteOrgExists);
       const athleteOrg = athleteOrgExists || await addOrgClub(dbConn);
       await addAnonAthlete(dbConn, athleteOrg);
