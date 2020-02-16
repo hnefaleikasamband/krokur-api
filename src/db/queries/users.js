@@ -5,7 +5,7 @@ const findUserById = (db, id) => db.any('SELECT * FROM users WHERE id = ${id}', 
 
 const findUserByGoogleId = (db, googleId) => db.any('SELECT * from users WHERE google_id = ${googleId}', { googleId });
 
-const getAllUsers = async db => db.any('SELECT id, email, name, club, role, disabled from users');
+const getAllUsers = async (db) => db.any('SELECT id, email, name, club, role, disabled from users');
 
 const addUser = async (db, user) => db.one(
   'INSERT INTO '

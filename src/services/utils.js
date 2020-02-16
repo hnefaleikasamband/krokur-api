@@ -15,7 +15,7 @@ const ROLES = {
 };
 
 /** Async/Await error handler for consistent error handling */
-const dreamCatcher = route => async (req, res) => {
+const dreamCatcher = (route) => async (req, res) => {
   try {
     return await route(req, res);
   } catch (err) {
@@ -39,7 +39,9 @@ const BASE_ACHIEVEMENT = {
   goldBoutsLeft: 4,
 };
 
-const newAchievementOrBoutsLeft = date => boutsLeft => (boutsLeft <= 0 ? { date, boutsLeft } : { date: null, boutsLeft: parseInt(boutsLeft, 10) - 1 });
+const newAchievementOrBoutsLeft = (date) => (boutsLeft) => (boutsLeft <= 0
+  ? { date, boutsLeft }
+  : { date: null, boutsLeft: parseInt(boutsLeft, 10) - 1 });
 
 /**
  * Does checks to see if any of the achievements should be updated
@@ -86,11 +88,11 @@ const recalculateAndUpdateAchievements = async (db, athleteId) => {
   }
 };
 
-const snakeToCamelCase = snek => snek.replace(/(_\w)/g, big => big[1].toUpperCase());
+const snakeToCamelCase = (snek) => snek.replace(/(_\w)/g, (big) => big[1].toUpperCase());
 
 const mapDbObjectToResponse = (obj) => {
   if (Array.isArray(obj)) {
-    return obj.map(v => mapDbObjectToResponse(v));
+    return obj.map((v) => mapDbObjectToResponse(v));
   }
   if (obj !== null && obj.constructor === Object) {
     return Object.keys(obj).reduce(
