@@ -29,7 +29,7 @@ const addClub = utils.dreamCatcher(async (req, res) => {
   }
 
   const club = await clubsQueries.addClub(req.db, validatedClub);
-  return res.redirect(303, `/api/v1/clubs/${club.shorthand}`);
+  return res.redirect(303, `/v1/clubs/${club.shorthand}`);
 });
 
 const updateClub = utils.dreamCatcher(async (req, res) => {
@@ -48,7 +48,7 @@ const updateClub = utils.dreamCatcher(async (req, res) => {
   }
 
   const updatedClub = await clubsQueries.updateClub(req.db, validatedClub);
-  return res.redirect(303, `/api/v1/clubs/${updatedClub.shorthand}`);
+  return res.redirect(303, `/v1/clubs/${updatedClub.shorthand}`);
 });
 
 export default { getClubData, addClub, updateClub };

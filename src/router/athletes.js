@@ -59,7 +59,7 @@ const createAthlete = utils.dreamCatcher(async (req, res) => {
   const newAthlete = await athletesQueries.addAthlete(req.db, validatedAthlete);
   try {
     await achievementsQueries.startAchievements(req.db, newAthlete.id);
-    return res.redirect(303, `/api/v1/athletes/${newAthlete.id}`);
+    return res.redirect(303, `/v1/athletes/${newAthlete.id}`);
   } catch (error) {
     logger.error(error);
     await athletesQueries.removeAthlete(req.db, newAthlete.id);
@@ -96,7 +96,7 @@ const updateAthlete = utils.dreamCatcher(async (req, res) => {
 
   const newAthleteInfo = { ...oldAthlete[0], ...validatedAthlete };
   const savedAthlete = await athletesQueries.updateAthlete(req.db, newAthleteInfo);
-  return res.redirect(303, `/api/v1/athletes/${savedAthlete.id}`);
+  return res.redirect(303, `/v1/athletes/${savedAthlete.id}`);
 });
 
 const getMatchesForAthlete = utils.dreamCatcher(async (req, res) => {
