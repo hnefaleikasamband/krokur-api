@@ -42,7 +42,6 @@ const jwtLogin = new JwtStrategy(jwtOptions, async (req, payload, done) => {
   }
 });
 
-
 const serializeUser = ((user, done) => {
   done(null, user);
 });

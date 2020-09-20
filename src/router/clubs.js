@@ -2,7 +2,6 @@ import schema from '../db/schemas';
 import { clubsQueries } from '../db/index';
 import utils from '../services/utils';
 
-
 const getClubData = utils.dreamCatcher(async (req, res) => {
   if (req.params.shorthand) {
     const club = utils.mapDbObjectToResponse(

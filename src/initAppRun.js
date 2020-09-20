@@ -16,6 +16,7 @@ async function addSuperUser(dbConn) {
     name: 'Administrator',
     disabled: 'false',
     role: 'ADMIN',
+    club: null,
   };
 
   const validatedUser = await schema.userSchema.validateAsync(
@@ -30,7 +31,6 @@ async function addSuperUser(dbConn) {
     `Inserted Super User -> name(email): ${newUser.name}(${newUser.email}), role: ${newUser.role} disabled: ${newUser.disabled}`,
   );
 }
-
 
 async function addOrgClub(dbConn) {
   const validatedClub = await schema.clubSchema.validateAsync(
@@ -57,7 +57,7 @@ async function addAnonAthlete(dbConn, club) {
     schema.defaultValidationOptions,
   );
 
-  console.log(validatedAthlete);
+  logger.info(validatedAthlete);
 
   const newAthlete = await athletesQueries.addAthlete(dbConn, validatedAthlete);
   logger.info(
@@ -71,26 +71,39 @@ const init = async (dbConn) => {
     const usersQuery = usersQueries.getAllUsers(dbConn);
     const clubsQuery = clubsQueries.getAllClubs(dbConn);
     const anonExistsQuery = athletesQueries.athleteExists(dbConn, '0000000000');
-    const [users, clubs, anonExists] = await Promise.all([usersQuery, clubsQuery, anonExistsQuery]);
+    const [users, clubs, anonExists] = await Promise.all([
+      usersQuery,
+      clubsQuery,
+      anonExistsQuery,
+    ]);
 
     if (!anonExists) {
-      const athleteOrgExists = clubs.find((c) => c.shorthand === ATHLETE_ORGANIZATION.shorthand);
-      console.log(athleteOrgExists);
-      const athleteOrg = athleteOrgExists || await addOrgClub(dbConn);
+      const athleteOrgExists = clubs.find(
+        (c) => c.shorthand === ATHLETE_ORGANIZATION.shorthand,
+      );
+      logger.info(athleteOrgExists);
+      const athleteOrg = athleteOrgExists || (await addOrgClub(dbConn));
       await addAnonAthlete(dbConn, athleteOrg);
     } else {
-      logger.info('... Anon user & Athlete Org already registered, no action needed!');
+      logger.info(
+        '... Anon user & Athlete Org already registered, no action needed!',
+      );
     }
 
     if (users && users.length > 0) {
-      logger.info('... There are some users already in the database, super-user was not added!');
+      logger.info(
+        '... There are some users already in the database, super-user was not added!',
+      );
       return;
     }
 
     await addSuperUser(dbConn);
     return;
   } catch (error) {
-    logger.error({ message: '... Error caught when trying to run super-user init', error });
+    logger.error({
+      message: '... Error caught when trying to run super-user init',
+    });
+    logger.error(error);
   }
 };
 
