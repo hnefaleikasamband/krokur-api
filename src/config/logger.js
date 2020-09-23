@@ -8,7 +8,9 @@ const logger = pino({
     paths: ['*.password', '*.passwordHash'],
   },
   timestamp: () => `,"timestamp":"${new Date().toISOString()}"`,
-  useLevelLabels: true,
+  formatters: {
+    level: (label, number) => ({ level: label }),
+  },
 });
 
 export default logger;
