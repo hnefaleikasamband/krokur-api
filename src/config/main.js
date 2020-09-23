@@ -5,5 +5,5 @@ export default {
   secret: process.env.JWT_SECRET || 'b7025001-67b2-4eb6-9d0b-297040f72d3e',
   googleId: process.env.GOOGLE_ID,
   googleSecret: process.env.GOOGLE_SECRET,
-  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL || '/api/v1/auth/google/redirect',
+  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL || '/v1/auth/google/redirect',
 };
