@@ -46,7 +46,7 @@ try {
     app.use(dbMiddleWare);
 
     app.listen(config.port, () => {
-      logger.info('Server is running on port: ', config.port);
+      logger.info(`Server is running on port: ${config.port}`);
     });
 
     router(app);
