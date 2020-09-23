@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@git.mikligardur.com:HNI/diploma-umsysla.git"
+    "url": "git@github.com:hnefaleikasamband/krokur-api.git"
   },
   "author": "GDGunnars",
   "license": "GPL-3.0",
@@ -26,7 +26,7 @@
     "@babel/node": "^7.10.5",
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
     "@babel/preset-env": "^7.11.5",
-    "eslint": "^6.8.0",
+    "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0",
     "nodemon": "^2.0.4"
@@ -45,6 +45,6 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg-promise": "^10.6.1",
-    "pino": "^5.17.0"
+    "pino": "^6.6.1"
   }
 }
