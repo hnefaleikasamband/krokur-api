@@ -70,7 +70,7 @@ export const restrictAccessTo = (roles) => async (req, res, next) => {
     res.status(401).send('Unauthorized');
     return next('Unauthorized');
   } catch (error) {
-    logger.error(`Access fail for user: ${user.id}`, error);
+    logger.error(`Access check fail for user: ${user.id}`, error);
     return next('Unauthorized');
   }
 };

@@ -37,9 +37,7 @@ const getSingleOrAllAthletes = utils.dreamCatcher(async (req, res) => {
 const createAthlete = utils.dreamCatcher(async (req, res) => {
   const { user } = req;
   const athlete = req.body;
-  if (user.role !== utils.ROLES.ADMIN
-    && user.role !== utils.ROLES.JUDGE
-    && (user.role === utils.ROLES.COACH && user.club !== athlete.club)) {
+  if (user.role === utils.ROLES.COACH && user.club.id !== athlete.club) {
     return res.status(401).json('Unauthorized');
   }
   athlete.ssn = kennitala.clean(athlete.ssn);
