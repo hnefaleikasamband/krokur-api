@@ -19,14 +19,14 @@ const getDetailedAllAthletes = async (db) => db.any(
   'SELECT A.id, A.name, A.ssn, C.shorthand as club, AC.diploma_date, AC.bronz_date, AC.silver_date, AC.gold_date, '
       + 'AC.diploma_bouts_left, AC.bronz_bouts_left, AC.silver_bouts_left, AC.gold_bouts_left, COUNT(B.id) as bouts '
       + 'FROM Athletes A INNER JOIN clubs C ON A.club = C.id INNER JOIN achievements AC ON A.id = AC.athlete_id '
-      + 'INNER JOIN bouts B on A.id = B.athlete_id GROUP BY A.id, C.shorthand, AC.athlete_id;',
+      + 'LEFT JOIN bouts B on A.id = B.athlete_id GROUP BY A.id, C.shorthand, AC.athlete_id;',
 );
 
 const getDetailedAllAthletesByClub = async (db, clubId) => db.any(
   'SELECT A.id, A.name, A.ssn, C.shorthand as club, AC.diploma_date, AC.bronz_date, AC.silver_date, AC.gold_date, '
-      + 'AC.diploma_bouts_left, AC.bronz_bouts_left, AC.silver_bouts_left, AC.gold_bouts_left '
+      + 'AC.diploma_bouts_left, AC.bronz_bouts_left, AC.silver_bouts_left, AC.gold_bouts_left, COUNT(B.id) as bouts '
       + 'FROM Athletes A INNER JOIN clubs C ON A.club = C.id INNER JOIN achievements AC ON A.id = AC.athlete_id '
-      + 'where C.id = ${clubId};',
+      + 'LEFT JOIN bouts B on A.id = B.athlete_id WHERE C.id = ${clubId} GROUP BY A.id, C.shorthand, AC.athlete_id;',
   { clubId },
 );
 
