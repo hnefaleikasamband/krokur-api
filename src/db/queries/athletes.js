@@ -7,7 +7,8 @@ const findAthleteById = async (db, id) => db.any(
   { id },
 );
 
-const athleteExists = async (db, ssn) => (await db.any('SELECT * FROM athletes where ssn = ${ssn}', { ssn })).length > 0;
+const athleteExists = async (db, ssn) => (await db.any('SELECT * FROM athletes where ssn = ${ssn}', { ssn })).length
+  > 0;
 
 const getAllAthletes = async (db) => db.any(
   'SELECT A.id, A.name, C.shorthand as club, AC.diploma_date, AC.bronz_date, AC.silver_date, AC.gold_date '
@@ -16,8 +17,9 @@ const getAllAthletes = async (db) => db.any(
 
 const getDetailedAllAthletes = async (db) => db.any(
   'SELECT A.id, A.name, A.ssn, C.shorthand as club, AC.diploma_date, AC.bronz_date, AC.silver_date, AC.gold_date, '
-      + 'AC.diploma_bouts_left, AC.bronz_bouts_left, AC.silver_bouts_left, AC.gold_bouts_left '
-      + 'FROM Athletes A INNER JOIN clubs C ON A.club = C.id INNER JOIN achievements AC ON A.id = AC.athlete_id;',
+      + 'AC.diploma_bouts_left, AC.bronz_bouts_left, AC.silver_bouts_left, AC.gold_bouts_left, COUNT(B.id) as bouts '
+      + 'FROM Athletes A INNER JOIN clubs C ON A.club = C.id INNER JOIN achievements AC ON A.id = AC.athlete_id '
+      + 'INNER JOIN bouts B on A.id = B.athlete_id GROUP BY A.id, C.shorthand, AC.athlete_id;',
 );
 
 const getDetailedAllAthletesByClub = async (db, clubId) => db.any(
@@ -41,7 +43,11 @@ const updateAthlete = async (db, athlete) => db.one(
   athlete,
 );
 
-const removeAthlete = (db, id) => db.result('DELETE FROM athletes WHERE id = ${id}', { id }, (r) => r.rowCount === 1);
+const removeAthlete = (db, id) => db.result(
+  'DELETE FROM athletes WHERE id = ${id}',
+  { id },
+  (r) => r.rowCount === 1,
+);
 
 export default {
   findAthleteById,
