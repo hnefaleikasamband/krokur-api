@@ -126,6 +126,13 @@ const addMatchForSingleAthlete = utils.dreamCatcher(async (req, res) => {
   return res.status(201).json(utils.mapDbObjectToResponse(newBout));
 });
 
+const recalculateAthleteAchievement = utils.dreamCatcher(async (req, res) => {
+  const { athleteId } = req.params;
+
+  await utils.recalculateAndUpdateAchievements(req.db, athleteId);
+  return res.status(200).json({ message: `Successfully triggered recalculation for id: ${athleteId}` });
+});
+
 export default {
   getSingleOrAllAthletes,
   getAllAthletesDetailed,
@@ -133,4 +140,5 @@ export default {
   updateAthlete,
   getMatchesForAthlete,
   addMatchForSingleAthlete,
+  recalculateAthleteAchievement,
 };

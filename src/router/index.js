@@ -56,6 +56,7 @@ export default function (app) {
   apiRoutes.post('/athletes', requireAuth, restrictAccessTo([ADMIN, COACH]), athletes.createAthlete);
   apiRoutes.put('/athletes/:id', requireAuth, restrictAccessTo([ADMIN, COACH]), athletes.updateAthlete);
   apiRoutes.post('/athletes/:athleteId/bouts', requireAuth, athletes.addMatchForSingleAthlete);
+  apiRoutes.post('/athletes/:athleteId/recalculate', requireAuth, restrictAccessTo([ADMIN]), athletes.recalculateAthleteAchievement);
 
   /**
    * Clubs
