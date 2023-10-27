@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    /* Completeness */
+    "resolveJsonModule": true,
+    "lib": ["DOM", "ES2023", "ESNext"]
+  },
+  // "extends": "@tsconfig/node20/tsconfig.json", // https://github.com/tsconfig/bases/blob/main/bases/node20.json
+  "include": ["./src"],
+  "exclude": ["./node_modules"]
+}

@@ -1,30 +1,40 @@
-import schema from '../db/schemas';
-import { clubsQueries } from '../db/index';
-import utils from '../services/utils';
+import schema from "../db/schemas";
+import { clubsQueries } from "../db/index";
+import utils from "../services/utils";
 
 const getClubData = utils.dreamCatcher(async (req, res) => {
   if (req.params.shorthand) {
     const club = utils.mapDbObjectToResponse(
-      await clubsQueries.findClubByShorthand(req.db, req.params.shorthand.toUpperCase()),
+      await clubsQueries.findClubByShorthand(
+        req.db,
+        req.params.shorthand.toUpperCase()
+      )
     );
-    if (!club.length > 0) {
-      return res.status(404).json({ error: `Could not find club "${req.params.shorthand}"` });
+    if (!(club.length > 0)) {
+      return res
+        .status(404)
+        .json({ error: `Could not find club "${req.params.shorthand}"` });
     }
     return res.json(club);
   }
 
-  const clubs = utils.mapDbObjectToResponse(await clubsQueries.getAllClubs(req.db));
+  const clubs = utils.mapDbObjectToResponse(
+    await clubsQueries.getAllClubs(req.db)
+  );
   return res.json({ clubs });
 });
 
 const addClub = utils.dreamCatcher(async (req, res) => {
   const validatedClub = await schema.clubSchema.validateAsync(
     req.body,
-    schema.defaultValidationOptions,
+    schema.defaultValidationOptions
   );
-  const exists = await clubsQueries.findClubByShorthand(req.db, req.body.shorthand);
+  const exists = await clubsQueries.findClubByShorthand(
+    req.db,
+    req.body.shorthand
+  );
   if (exists.length > 0) {
-    return res.status(400).json({ error: 'Club already exists' });
+    return res.status(400).json({ error: "Club already exists" });
   }
 
   const club = await clubsQueries.addClub(req.db, validatedClub);
@@ -38,12 +48,12 @@ const updateClub = utils.dreamCatcher(async (req, res) => {
   };
   const validatedClub = await schema.clubSchema.validateAsync(
     club,
-    schema.defaultValidationOptions,
+    schema.defaultValidationOptions
   );
 
   const exists = await clubsQueries.findClubById(req.db, validatedClub.id);
   if (exists.length <= 0) {
-    return res.status(404).json({ error: 'Club does not exists' });
+    return res.status(404).json({ error: "Club does not exists" });
   }
 
   const updatedClub = await clubsQueries.updateClub(req.db, validatedClub);

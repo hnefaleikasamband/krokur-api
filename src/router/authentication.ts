@@ -1,12 +1,10 @@
-import jwt from 'jsonwebtoken';
-import config from '../config/main';
-import { usersQueries, clubsQueries } from '../db/index';
-import logger from '../config/logger';
-// To be able to run async/await
-import '@babel/polyfill';
+import * as jwt from "jsonwebtoken";
+import config from "../config/main";
+import { usersQueries, clubsQueries } from "../db/index";
+import logger from "../config/logger";
 
 function generateToken(user) {
-  return jwt.sign(user, config.secret, { expiresIn: '180m' });
+  return jwt.sign(user, config.secret, { expiresIn: "180m" });
   // Used while trying out timeouts.
   // return jwt.sign(user, config.secret, { expiresIn: '2m' });
 }
@@ -14,9 +12,11 @@ function generateToken(user) {
 async function setUserInfo(db, user) {
   let club;
   try {
-    club = user.club ? (await clubsQueries.findClubById(db, user.club))[0] : null;
+    club = user.club
+      ? (await clubsQueries.findClubById(db, user.club))[0]
+      : null;
   } catch (error) {
-    logger.error('Error fetching club in setUserInfo:', error);
+    logger.error("Error fetching club in setUserInfo:", error);
     club = null;
   }
   return {
@@ -67,10 +67,10 @@ export const restrictAccessTo = (roles) => async (req, res, next) => {
       return next();
     }
 
-    res.status(401).send('Unauthorized');
-    return next('Unauthorized');
+    res.status(401).send("Unauthorized");
+    return next("Unauthorized");
   } catch (error) {
     logger.error(`Access check fail for user: ${user.id}`, error);
-    return next('Unauthorized');
+    return next("Unauthorized");
   }
 };
