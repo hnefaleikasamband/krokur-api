@@ -38,6 +38,6 @@ jobs:
         uses: caprover/deploy-from-github@v1.1.2
         with:
           server: "${{ secrets.CAPROVER_SERVER }}"
-          app: "${{ secrets.KROKUR_STAGING_APP_NAME }}"
+          app: "${{ vars.KROKUR_STAGING_APP_NAME }}"
           token: "${{ secrets.KROKUR_STAGING_APP_TOKEN }}"
           image: ${{ env.IMAGE_URL }}
