@@ -39,5 +39,5 @@ jobs:
         with:
           server: "${{ secrets.CAPROVER_SERVER }}"
           app: "${{ secrets.KROKUR_STAGING_APP_NAME }}"
-          token: "${{ secrets.APP_TOKEN }}"
+          token: "${{ secrets.KROKUR_STAGING_APP_TOKEN }}"
           image: ${{ env.IMAGE_URL }}
