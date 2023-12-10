@@ -3,11 +3,11 @@
   "version": "0.0.2",
   "description": "API for managing youth points for diploma boxing.",
   "private": true,
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "start": "env $(cat .env) nodemon --exec babel-node src/app.js",
-    "build": "npm run clean; babel -d dist src -s",
-    "seed": "babel-node src/dbSeeder.js",
+    "start": "node --env-file=.env -r ts-node/register src/index.ts",
+    "build": "npm run clean; tsc",
     "clean": "rm -rf dist",
     "lint": "eslint src/ --quiet",
     "lint:fix": "eslint src/ --fix",
@@ -21,30 +21,27 @@
   "author": "GDGunnars",
   "license": "GPL-3.0",
   "devDependencies": {
-    "@babel/cli": "^7.11.6",
-    "@babel/core": "^7.11.6",
-    "@babel/node": "^7.10.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
-    "@babel/preset-env": "^7.11.5",
+    "@tsconfig/node20": "^20.1.2",
+    "@types/node": "^20.8.9",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
-    "eslint-plugin-import": "^2.22.0",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.11.5",
-    "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "joi": "^17.11.0",
     "jsonwebtoken": "^8.5.1",
-    "kennitala": "^1.2.3",
+    "kennitala": "^1.2.6",
     "morgan": "^1.10.0",
     "passport": "^0.4.1",
     "passport-google-oauth": "^2.0.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pg-promise": "^10.6.1",
-    "pino": "^6.6.1"
+    "pg-promise": "^10.15.4",
+    "pino": "^8.16.1"
   }
 }

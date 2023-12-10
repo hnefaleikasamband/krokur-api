@@ -1,10 +1,11 @@
-import pgPromise from 'pg-promise';
-import config from '../config/main';
-import logger from '../config/logger';
+import * as pgPromise from "pg-promise";
+import config from "../config/main";
+import logger from "../config/logger";
 
 const pgp = pgPromise();
 
 const db = (connectionString = config.database) => {
+  console.log(`#### -> ${connectionString}`);
   const database = pgp({
     connectionString,
     ssl: {
