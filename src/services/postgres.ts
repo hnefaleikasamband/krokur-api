@@ -5,7 +5,6 @@ import logger from "../config/logger";
 const pgp = pgPromise();
 
 const db = (connectionString = config.database) => {
-  console.log(`#### -> ${connectionString}`);
   const database = pgp({
     connectionString,
     ssl: {
